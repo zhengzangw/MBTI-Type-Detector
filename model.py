@@ -8,11 +8,13 @@ print(tf.__version__)
 np.random.seed(1234)
 tf.set_random_seed(1234)
 
+MAX_LENGTH = 2000
+
 def cnn_model():
     # maxlen=200: 72%
     # maxlen=2000: 75%
     model = keras.Sequential()
-    e = keras.layers.Embedding(vocab_size, 50, weights=[embedding_matrix], input_length=max_length, trainable=False)
+    e = keras.layers.Embedding(vocab_size, 50, weights=[embedding_matrix], input_length=MAX_LENGTH, trainable=False)
     model.add(e)
     model.add(keras.layers.Dropout(0.2))
     model.add(keras.layers.Conv1D(64, 3, padding='valid', activation='relu', strides=1))
@@ -24,7 +26,7 @@ def cnn_model():
 def lstm_cnn_model():
     # maxlen=200: 74%
     model = keras.Sequential()
-    e = keras.layers.Embedding(vocab_size, 50, weights=[embedding_matrix], input_length=max_length, trainable=False)
+    e = keras.layers.Embedding(vocab_size, 50, weights=[embedding_matrix], input_length=MAX_LENGTH, trainable=False)
     model.add(e)
     model.add(keras.layers.LSTM(50, return_sequences=True))
     model.add(keras.layers.Conv1D(64, 3, padding='valid', activation='relu', strides=1))
@@ -34,8 +36,10 @@ def lstm_cnn_model():
     return model
 
 def lstm_model():
+    # maxlen=200: 68%
+    # 10 epoches
     model = keras.Sequential()
-    e = keras.layers.Embedding(vocab_size, 50, weights=[embedding_matrix], input_length=max_length, trainable=False)
+    e = keras.layers.Embedding(vocab_size, 50, weights=[embedding_matrix], input_length=MAX_LENGTH, trainable=False)
     model.add(e)
     model.add(keras.layers.LSTM(50, return_sequences=True))
     model.add(keras.layers.LSTM(50, return_sequences=True))
@@ -43,6 +47,24 @@ def lstm_model():
     model.add(keras.layers.Flatten())
     model.add(keras.layers.Dense(4, activation='sigmoid'))
     return model
+
+def big_model():
+    model = keras.Sequential()
+    e = keras.layers.Embedding(vocab_size, 50, weights=[embedding_matrix], input_length=max_length, trainable=False)
+    model.add(e)
+    model.add(keras.layers.Dropout(0.5))
+    model.add(keras.layers.Conv1D(512, 20, padding='valid', activation='relu', strides=1))
+    model.add(keras.layers.Dropout(0.5))
+    model.add(keras.layers.LSTM(50, return_sequences=True))
+    model.add(keras.layers.Dropout(0.5))
+    model.add(keras.layers.Conv1D(256, 10, padding='valid', activation='relu', strides=1))
+    model.add(keras.layers.Dropout(0.5))
+    model.add(keras.layers.Conv1D(64, 5, padding='valid', activation='relu', strides=1))
+    model.add(keras.layers.Dropout(0.2))
+    model.add(keras.layers.GlobalMaxPool1D())
+    model.add(keras.layers.Dense(4, activation='sigmoid'))
+    return model
+
 
 # Input doc
 df = pd.read_csv('MBTIv1.csv')
@@ -55,8 +77,8 @@ t = keras.preprocessing.text.Tokenizer()
 t.fit_on_texts(docs)
 vocab_size = len(t.word_index) + 1
 encoded_docs = t.texts_to_sequences(docs)
-max_length = 200
-padded_docs = keras.preprocessing.sequence.pad_sequences(encoded_docs, maxlen=max_length, padding='post')
+
+padded_docs = keras.preprocessing.sequence.pad_sequences(encoded_docs, maxlen=MAX_LENGTH, padding='post')
 
 # Input gloVe
 embeddings_index = {}
@@ -89,14 +111,17 @@ valY = labels[d1:d2, :]
 testX = padded_docs[d2:]
 testY = labels[d2:, :]
 
-model = lstm_model()
+model = big_model()
 
 model.summary()
+callbacks = [keras.callbacks.EarlyStopping(monitor='val_loss', patience=3),
+             keras.callbacks.ModelCheckpoint(filepath='best_model', monitor='val_loss', save_best_only=True)]
 model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
 
 # Training
 print("Begin Training")
-history = model.fit(trainX, trainY, epochs=10, verbose=1, validation_data = (valX, valY))
+history = model.fit(trainX, trainY, epochs=100, callbacks=callbacks, verbose=1,\
+                    validation_data = (valX, valY))
 
 # Testing
 loss, accuracy = model.evaluate(testX, testY, verbose=1)
