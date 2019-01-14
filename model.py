@@ -50,7 +50,7 @@ def lstm_model():
 
 def big_model():
     model = keras.Sequential()
-    e = keras.layers.Embedding(vocab_size, 50, weights=[embedding_matrix], input_length=max_length, trainable=False)
+    e = keras.layers.Embedding(vocab_size, 50, weights=[embedding_matrix], input_length=MAX_LENGTH, trainable=False)
     model.add(e)
     model.add(keras.layers.Dropout(0.5))
     model.add(keras.layers.Conv1D(512, 20, padding='valid', activation='relu', strides=1))
