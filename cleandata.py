@@ -1,6 +1,7 @@
 # Preworks lib
 import pandas as pd
 import numpy as np
+import matplotlib.pyplot as plt
 import re
 
 # read from file
@@ -71,16 +72,21 @@ def output_csv(df, file_name):
     df.to_csv(file_name)
 
 # Main prework process for the whole dataset
-def prework(input_file, output_file):
+def prework(input_file, output_file = '', is_split_sentence = False, output = False):
     df = input_csv(input_file)
     get_the_label(df)
     deal_with_seperator(df)
     deal_with_URL(df)
     deal_with_emoji(df)
     # selectable
-    df = split_sentence(df)
-    output_csv(df, output_file)
+    if is_split_sentence == True:
+        df = split_sentence(df)
+    if output == True:
+        output_csv(df, output_file)
+    else:
+        return df
 
-# Save df
+# Just for Debug or you just want to prework
 if __name__ == '__main__':
-    prework('./MBTIv0.csv', './MBTIv2.csv')
+    prework('./MBTIv0.csv', './MBTIv1.csv', output=True)
+    prework('./MBTIv0.csv', './MBTIv2.csv', is_split_sentence=True, output=True)
