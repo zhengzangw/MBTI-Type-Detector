@@ -4,12 +4,45 @@ from tensorflow import keras
 import numpy as np
 import pandas as pd
 from sklearn.utils import shuffle
-
 print(tf.__version__)
-
 np.random.seed(1234)
 tf.set_random_seed(1234)
 
+def cnn_model():
+    # maxlen=200: 72%
+    # maxlen=2000: 75%
+    model = keras.Sequential()
+    e = keras.layers.Embedding(vocab_size, 50, weights=[embedding_matrix], input_length=max_length, trainable=False)
+    model.add(e)
+    model.add(keras.layers.Dropout(0.2))
+    model.add(keras.layers.Conv1D(64, 3, padding='valid', activation='relu', strides=1))
+    model.add(keras.layers.GlobalMaxPool1D())
+    model.add(keras.layers.Dropout(0.2))
+    model.add(keras.layers.Dense(4, activation='sigmoid'))
+    return model
+
+def lstm_cnn_model():
+    # maxlen=200: 74%
+    model = keras.Sequential()
+    e = keras.layers.Embedding(vocab_size, 50, weights=[embedding_matrix], input_length=max_length, trainable=False)
+    model.add(e)
+    model.add(keras.layers.LSTM(50, return_sequences=True))
+    model.add(keras.layers.Conv1D(64, 3, padding='valid', activation='relu', strides=1))
+    model.add(keras.layers.GlobalMaxPool1D())
+    model.add(keras.layers.Dropout(0.5))
+    model.add(keras.layers.Dense(4, activation='sigmoid'))
+    return model
+
+def lstm_model():
+    model = keras.Sequential()
+    e = keras.layers.Embedding(vocab_size, 50, weights=[embedding_matrix], input_length=max_length, trainable=False)
+    model.add(e)
+    model.add(keras.layers.LSTM(50, return_sequences=True))
+    model.add(keras.layers.LSTM(50, return_sequences=True))
+    model.add(keras.layers.TimeDistributed(keras.layers.Dense(25)))
+    model.add(keras.layers.Flatten())
+    model.add(keras.layers.Dense(4, activation='sigmoid'))
+    return model
 
 # Input doc
 df = pd.read_csv('MBTIv1.csv')
@@ -56,20 +89,13 @@ valY = labels[d1:d2, :]
 testX = padded_docs[d2:]
 testY = labels[d2:, :]
 
-# Define cnn model
-model = keras.Sequential()
-e = keras.layers.Embedding(vocab_size, 50, weights=[embedding_matrix], input_length=max_length, trainable=False)
-model.add(e)
-model.add(keras.layers.Dropout(0.2))
-model.add(keras.layers.Conv1D(64, 3, padding='valid',activation='relu',strides=1))
-model.add(keras.layers.GlobalMaxPool1D())
-model.add(keras.layers.Dropout(0.2))
-model.add(keras.layers.Dense(4, activation='sigmoid'))
+model = lstm_model()
 
 model.summary()
 model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
 
 # Training
+print("Begin Training")
 history = model.fit(trainX, trainY, epochs=10, verbose=1, validation_data = (valX, valY))
 
 # Testing
