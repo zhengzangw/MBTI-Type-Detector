@@ -1,10 +1,11 @@
-.idea
-__pycache__
-*.h5
-*.ipynb
-.ipynb_checkpoints
 .DS_Store
+__pycache__
+.idea
+.ipynb_checkpoints
+logs
 glove.6B
 glove.6B.*
 *.csv
 *.p
+*.h5
+
