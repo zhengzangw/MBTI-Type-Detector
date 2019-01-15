@@ -44,6 +44,19 @@ def lstm_model():
     model.add(keras.layers.Dense(4, activation='sigmoid'))
     return model
 
+def cxy_xjbg_model():
+    model = keras.Sequential()
+    e = keras.layers.Embedding(vocab_size, 50, weights=[embedding_matrix], input_length=max_length, trainable=False)
+    model.add(e)
+    model.add(keras.layers.Conv1D(64, 3, padding='valid', activation='sigmoid', strides=1))
+    model.add(keras.layers.GlobalMaxPool1D())
+    model.add(keras.layers.Dropout(0.5))
+    model.add(keras.layers.LSTM(50, return_sequences=True))
+    model.add(keras.layers.TimeDistributed(keras.layers.Conv1D(25, 10, padding='valid', activation='relu', strides=1)))
+    model.add(keras.layers.Dense(1024, activation='tanh'))
+    model.add(keras.layers.Dense(4, activation='sigmoid'))
+    return model
+
 # Input doc
 df = pd.read_csv('MBTIv1.csv')
 df = shuffle(df)
@@ -89,7 +102,8 @@ valY = labels[d1:d2, :]
 testX = padded_docs[d2:]
 testY = labels[d2:, :]
 
-model = lstm_model()
+#model = lstm_model()
+model = cxy_xjbg_model()
 
 model.summary()
 model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
