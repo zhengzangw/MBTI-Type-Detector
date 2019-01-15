@@ -169,7 +169,7 @@ if __name__=="__main__":
         callbacks = [keras.callbacks.EarlyStopping(monitor='val_loss', patience=3),
                  keras.callbacks.ModelCheckpoint(filepath='best_model.h5', monitor='val_loss', save_best_only=True)]
     
-        # 根据分类的函方式选择对应的函数
+        # Choose Evaluating Function
         if CTYPE!=4 and CTYPE!=16:
             assert(0)
         loss_func = 'binary_crossentropy' if CTYPE==4 else 'categorical_crossentropy'
@@ -177,7 +177,7 @@ if __name__=="__main__":
 
         # Training
         LOGGER.info("Begin Training")
-        history = model.fit(trainX, trainY, epochs=20, callbacks=callbacks, verbose=1,
+        history = model.fit(trainX, trainY, epochs=10, callbacks=callbacks, verbose=1,
                             validation_data=(valX, valY))
 
         # Testing
