@@ -87,5 +87,9 @@ def prework(input_file, output_file = '', is_split_sentence = False, output = Fa
 
 # Just for Debug or you just want to prework
 if __name__ == '__main__':
-    prework('./MBTIv0.csv', './MBTIv1.csv', output=True)
-    prework('./MBTIv0.csv', './MBTIv2.csv', is_split_sentence=True, output=True)
+    #prework('./MBTIv0.csv', './MBTIv1.csv', output=True)
+    #prework('./MBTIv0.csv', './MBTIv2.csv', is_split_sentence=True, output=True)
+    df = pd.read_csv('./MBTIv0.csv')
+    df.to_csv('./MBTIv1.csv')
+    df = split_sentence(df)
+    df.to_csv('./MBTIv2.csv')

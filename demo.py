@@ -19,16 +19,13 @@ MAX_LENGTH = 400
 import os
 os.environ['KMP_DUPLICATE_LIB_OK']='True'
 
+import pickle
+
 if __name__=="__main__":
     args = parse_args()
     model = keras.models.load_model(args.loadpath)
 
-    df = pd.read_csv(CSV_NAME)
-    df = shuffle(df)
-    docs = df['posts']
-    labels = np.vstack([df['IE'], df['NS'], df['TF'], df['JP']]).transpose()
-    t = keras.preprocessing.text.Tokenizer()
-    t.fit_on_texts(docs)
+    t = pickle.load(open("tokenizer.p", "rb"))
 
     value = input('input a sentence: ')
     encoded_docs = t.texts_to_sequences([value])
@@ -43,3 +40,4 @@ if __name__=="__main__":
         MBTI_tag += MBTI_pos[i] if ans[0][i]>0.5 else MBTI_neg[i]
 
     print("Your MBTI type maybe: {}".format(MBTI_tag))
+    print(ans[0])

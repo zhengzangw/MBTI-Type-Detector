@@ -24,6 +24,7 @@ def parse_args():
     parser.add_argument("--model", dest="model", type=str, help="Choose Your Model")
     parser.add_argument("--seq", dest="is_seq", action='store_true', help="Is test on sequence")
     parser.add_argument("--load", dest="loadpath", type=str, help="Load Model")
+    parser.add_argument("--update_token", dest="utoken", action='store_true', help="Update Token or not")
     args = parser.parse_args()
     return args
 
@@ -78,6 +79,9 @@ def data_splitting(docs,labels):
     testY = labels[d2:, :]
     return trainX, trainY, valX, valY, testX, testY
 
+import pickle
+def dump_tokenizer(t):
+    pickle.dump(t, open("tokenizer.p", "wb"))
 
 if __name__=="__main__":
     args = parse_args()
@@ -87,6 +91,7 @@ if __name__=="__main__":
 
     t,padded_docs,labels = input_doc()
     embedding_matrix = get_embedding_matrix(t)
+    dump_tokenizer(t)
 
     trainX,trainY,valX,valY,testX,testY = data_splitting(padded_docs,labels)
 

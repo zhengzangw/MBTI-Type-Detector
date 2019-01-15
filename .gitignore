@@ -7,3 +7,4 @@ __pycache__
 glove.6B
 glove.6B.*
 *.csv
+*.p
