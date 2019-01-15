@@ -16,16 +16,15 @@ from models import get_model
 MAX_LENGTH = 2300
 VOCAB_SIZE = 0
 MODEL_NAME = ""
-CSV_NAME = "MBTIv1.csv"
+CSV_NAME = ""
 
 import argparse
 def parse_args():
     parser = argparse.ArgumentParser()
-    parser.add_argument("--model", dest="model", type=str, help="Choose Your Model")
-    parser.add_argument("--seq", dest="is_seq", action='store_true', help="Is test on sequence")
-    parser.add_argument("--load", dest="loadpath", type=str, help="Load Model")
-    parser.add_argument("--update_token", dest="utoken", action='store_true', help="Update Token or not")
-    parser.add_argument("--classify", dest="classify", type=int, help="Choose The Classify Method")
+    parser.add_argument("-m", "--model", dest="model", type=str, default="cnn", help="Choose Your Model")
+    parser.add_argument("-s", "--seq", dest="is_seq", action='store_true', help="Is test on sequence")
+    parser.add_argument("-l", "--load", dest="loadpath", type=str, help="Load Model")
+    parser.add_argument("-c", "--classify", dest="classify", type=int, default=4, help="Choose The Classify Method, 4/16")
     args = parser.parse_args()
     return args
 

@@ -4,7 +4,7 @@ LOGGER = get_logger("models")
 
 def get_model(name,vocab_size,embedding_matrix,input_length, classify_type):
     if  name=="cnn":
-        return cnn(vocab_size,embedding_matrix,input_lengt, classify_typeh)
+        return cnn(vocab_size,embedding_matrix,input_length, classify_type)
     elif name=="lstm":
         return lstm(vocab_size,embedding_matrix,input_length, classify_type)
     else:
@@ -33,7 +33,7 @@ def cnn(vocab_size,embedding_matrix,input_length, classify_type):
 
 def lstm(vocab_size,embedding_matrix,input_length, classify_type):
     model = keras.Sequential()
-e = keras.layers.Embedding(vocab_size, 50, weights=[embedding_matrix], input_length=input_length, trainable=False)
+    e = keras.layers.Embedding(vocab_size, 50, weights=[embedding_matrix], input_length=input_length, trainable=False)
     model.add(e)
     model.add(keras.layers.LSTM(50, return_sequences=True))
     model.add(keras.layers.LSTM(50, return_sequences=False))
