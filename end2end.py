@@ -91,6 +91,7 @@ def testing(model, testX, testY, classify_type):
 
     # 计算accuary
     shape = testX.shape
+    counter_sep = [0, 0, 0, 0]
     counter_one_by_one = 0
     counter_total = 0
     X = model.predict(testX).tolist()
@@ -106,9 +107,13 @@ def testing(model, testX, testY, classify_type):
                 bx = X[i][j] > 0.5
                 by = Y[i][j] > 0.5
                 counter_one_by_one += int(bx == by)
+                counter_sep[j] += int(bx == by)
                 rowx.append(bx)
                 rowy.append(by)
             counter_total += int(rowx == rowy)
+        cate = ['IE', 'NS', 'TF', 'NP']
+        for i in range(4):
+            LOGGER.info("Accuracy( for {} ) on test set(10%) = {}".format(cate[i], float(counter_sep[i])/float(shape[0])))
         LOGGER.info("Accuracy(Total) on test set(10%) = {}".format(float(counter_total)/float(shape[0])))
         LOGGER.info("Accuracy(One by one) on test set(10%) = {}".format((float(counter_one_by_one)/float(shape[0] * 4))))
     elif classify_type == 16:
