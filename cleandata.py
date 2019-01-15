@@ -1,7 +1,5 @@
 # Preworks lib
 import pandas as pd
-import numpy as np
-import re
 
 # read from file
 def input_csv(file_name):
