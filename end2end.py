@@ -25,7 +25,7 @@ import argparse
 def parse_args():
     parser = argparse.ArgumentParser()
     parser.add_argument("-m", "--model", dest="model", type=str, default="cnn", help="Choose Your Model")
-    parser.add_argument("-s", "--seq", dest="is_seq", action='store_true', help="Is test on sequence")
+    parser.add_argument("-s", "--seq", dest="is_seq", action='store_false', help="Is test on sequence")
     parser.add_argument("-l", "--load", dest="loadpath", type=str, default=None, help="Load Model")
     parser.add_argument("-c", "--classify", dest="classify", type=int, default=4, help="Choose The Classify Method, 4/16")
     args = parser.parse_args()
