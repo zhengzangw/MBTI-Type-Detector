@@ -127,7 +127,7 @@ if __name__=="__main__":
 
     trainX,trainY,valX,valY,testX,testY = data_splitting(padded_docs,labels)
 
-    model = get_model(MODEL_NAME, VOCAB_SIZE, embedding_matrix, MAX_LENGTH)
+    model = get_model(MODEL_NAME, VOCAB_SIZE, embedding_matrix, MAX_LENGTH, arg.classify)
     # model = keras.models.load_model(MODEL_NAME+".h5")
     model.summary(print_fn=LOGGER.info)
 
