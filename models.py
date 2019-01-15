@@ -4,11 +4,11 @@ LOGGER = get_logger("models")
 
 def get_model(name,vocab_size,embedding_matrix,input_length, classify_type):
     if name=="demo_cnn":
-        return demo_cnn(vocab_size,embedding_matrix,input_length)
+        return demo_cnn(vocab_size,embedding_matrix,input_length, classify_type)
     elif name=="two_level_cnn":
-        return two_level_cnn(vocab_size,embedding_matrix,input_length)
+        return two_level_cnn(vocab_size,embedding_matrix,input_lengt, classify_typeh)
     elif name=="two_level_lstm":
-        return two_level_lstm(vocab_size,embedding_matrix,input_length)
+        return two_level_lstm(vocab_size,embedding_matrix,input_length, classify_type)
     else:
         LOGGER.error("no such model: {}".format(name))
 
