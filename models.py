@@ -1,4 +1,6 @@
 from tensorflow import keras
+from log_utils import get_logger
+LOGGER = get_logger("models")
 
 def get_model(name,vocab_size,embedding_matrix,input_length):
     if name=="cnn_model":
@@ -54,15 +56,13 @@ def big_model(vocab_size,embedding_matrix,input_length):
     e = keras.layers.Embedding(vocab_size, 50, weights=[embedding_matrix], input_length=input_length, trainable=False)
     model.add(e)
     model.add(keras.layers.Dropout(0.5))
-    model.add(keras.layers.Conv1D(512, 20, padding='valid', activation='relu', strides=1))
+    model.add(keras.layers.Conv1D(256, 20, padding='valid', activation='relu', strides=1))
     model.add(keras.layers.Dropout(0.5))
     model.add(keras.layers.LSTM(50, return_sequences=True))
     model.add(keras.layers.Dropout(0.5))
-    model.add(keras.layers.TimeDistributed(keras.layers.Dense(300)))
+    model.add(keras.layers.Conv1D(128, 10, padding='valid', activation='relu', strides=1))
     model.add(keras.layers.Dropout(0.5))
-    model.add(keras.layers.Conv1D(256, 10, padding='valid', activation='relu', strides=1))
-    model.add(keras.layers.Dropout(0.5))
-    model.add(keras.layers.Conv1D(64, 5, padding='valid', activation='relu', strides=1))
+    model.add(keras.layers.Conv1D(32, 5, padding='valid', activation='relu', strides=1))
     model.add(keras.layers.Dropout(0.2))
     model.add(keras.layers.GlobalMaxPool1D())
     model.add(keras.layers.Dense(4, activation='sigmoid'))

@@ -1,6 +1,6 @@
 .idea
 __pycache__
-best_model
+*.h5
 *.ipynb
 .ipynb_checkpoints
 .DS_Store

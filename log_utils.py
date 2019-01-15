@@ -10,7 +10,7 @@ def strftime(t = None):
 #################
 import logging
 from logging.handlers import TimedRotatingFileHandler
-logging.basicConfig(format="[ %(asctime)s][%(module)s.%(funcName)s] %(message)s")
+logging.basicConfig(format="[ %(asctime)s][%(module)s] %(message)s")
 
 DEFAULT_LEVEL = logging.INFO
 DEFAULT_LOGGING_DIR = osp.join("logs", "end2end")
@@ -25,7 +25,7 @@ def init_fh():
     if not osp.exists(DEFAULT_LOGGING_DIR): os.makedirs(DEFAULT_LOGGING_DIR)
     logging_path = osp.join(DEFAULT_LOGGING_DIR, strftime() + ".log")
     fh = logging.FileHandler(logging_path)
-    fh.setFormatter(logging.Formatter("[ %(asctime)s][%(module)s.%(funcName)s] %(message)s"))
+    fh.setFormatter(logging.Formatter("[ %(asctime)s][%(module)s] %(message)s"))
 
 def get_logger(name="end2end", level=None):
     level = level or DEFAULT_LEVEL
