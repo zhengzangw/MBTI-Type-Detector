@@ -2,7 +2,6 @@
 import pandas as pd
 import numpy as np
 import re
-from stanza.nlp.corenlp import CoreNLPClient
 
 # read from file
 def input_csv(file_name):
@@ -23,6 +22,7 @@ def get_the_label(df):
         df[MBTI[t]] = [1 if df['type'][i][t]==MBTI_pos[t] else 0 for i in range(len(df))]
 
 def tokenize(df):
+    from stanza.nlp.corenlp import CoreNLPClient
     parser = CoreNLPClient(default_annotators=['ssplit', 'tokenize'], server='http://localhost:9000')
     parsed = []
     for item in df['posts']:
@@ -113,9 +113,9 @@ def prework_tokenize(input_file, output_file):
     tokenize(df)
     output_csv(df, output_file)
 
-# Just for Debug or you just want to prework
 if __name__ == '__main__':
-    prework_tokenize('./MBTIv0.csv', './MBTIv1.csv')
-    df = pd.read_csv('./MBTIv1.csv')
+    # prework_tokenize('./MBTIv0.csv', './MBTIv1.csv')
+    df = pd.read_csv('./MBTIv0.csv')
+    df.to_csv('./MBTIv1.csv')
     df = split_sentence(df)
     df.to_csv('./MBTIv2.csv')
