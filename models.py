@@ -23,20 +23,18 @@ def demo_cnn(vocab_size,embedding_matrix,input_length):
     model.add(keras.layers.Dropout(0.2))
     model.add(keras.layers.Dense(4, activation='sigmoid'))
     return model
-# maxlen=200: 72%
 # maxlen=2000: 75%
 
 def two_level_cnn(vocab_size,embedding_matrix,input_length):
     model = keras.Sequential()
     e = keras.layers.Embedding(vocab_size, 50, weights=[embedding_matrix], input_length=input_length, trainable=False)
     model.add(e)
-    model.add(keras.layers.Dropout(0.2))
-    model.add(keras.layers.Conv1D(100, 3, padding='valid', activation='relu', strides=1))
-    model.add(keras.layers.MaxPool1D())
-    model.add(keras.layers.Dropout(0.2))
-    model.add(keras.layers.Conv1D(50, 10, padding='valid', activation='relu', strides=3))
+    model.add(keras.layers.Conv1D(64, 7, padding='valid', activation='relu', strides=1))
+    model.add(keras.layers.MaxPool1D(2))
+    model.add(keras.layers.Conv1D(64, 7, padding='valid', activation='relu', strides=1))
     model.add(keras.layers.GlobalMaxPool1D())
     model.add(keras.layers.Dropout(0.5))
+    model.add(keras.layers.Dense(32, activation='relu'))
     model.add(keras.layers.Dense(4, activation='sigmoid'))
     return model
 
@@ -47,6 +45,6 @@ def two_level_lstm(vocab_size,embedding_matrix,input_length):
     model.add(keras.layers.LSTM(50, return_sequences=True))
     model.add(keras.layers.LSTM(50, return_sequences=True))
     model.add(keras.layers.Dropout(0.5))
-    model.add(keras.layers.TimeDistributed(keras.layers.Dense(vocab_size/10)))
+    model.add(keras.layers.TimeDistributed(keras.layers.Dense(500)))
     model.add(keras.layers.Dense(4, activation='sigmoid'))
     return model

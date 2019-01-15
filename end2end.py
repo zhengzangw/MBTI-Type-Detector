@@ -13,7 +13,7 @@ LOGGER = get_logger("end2end")
 
 from models import get_model
 
-MAX_LENGTH = 2000
+MAX_LENGTH = 2300
 VOCAB_SIZE = 0
 MODEL_NAME = ""
 

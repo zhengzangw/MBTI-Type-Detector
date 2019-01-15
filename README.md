@@ -1,10 +1,9 @@
 # Avalible model
-| name     | description   |
-| --       | ---           |
-| cnn      | cnn           |
-| new\_cnn | two level cnn |
-| lstm     | lstm + cnn    |
-| zzw      | a test model  |
+| name             | description                   |
+| --               | ---                           |
+| demo\_cnn        | one-level cnn                 |
+| two\_level\_cnn  | cnn+maxpool+cnn+maxpool+dense |
+| two\_level\_lstm | lstm+lstm+dense               |
 
 
 # csv column
