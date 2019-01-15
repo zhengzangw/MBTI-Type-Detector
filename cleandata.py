@@ -66,11 +66,6 @@ def split_sentence(df):
             dict['posts'].append(item)
     return pd.DataFrame(dict)
 
-# Seperate Punctuation
-def deal_with_punctuation(df):
-    df['posts'].map(lambda x: re.sub('([.,!?()])', r' \1 ', x))
-    df['posts'].map(lambda x: re.sub('\s{2,}', ' ', x))
-
 
 # Output the df file
 def output_csv(df, file_name):
@@ -83,9 +78,6 @@ def prework(input_file, output_file = '', is_split_sentence = False, output = Fa
     deal_with_seperator(df)
     deal_with_URL(df)
     deal_with_emoji(df)
-    print("DEBUG")
-    deal_with_punctuation(df)
-    print("UNDEBUG")
     # selectable
     if is_split_sentence == True:
         df = split_sentence(df)
