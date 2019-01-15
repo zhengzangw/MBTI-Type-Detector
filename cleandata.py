@@ -118,4 +118,5 @@ if __name__ == '__main__':
     df = pd.read_csv('./MBTIv0.csv')
     df.to_csv('./MBTIv1.csv')
     df = split_sentence(df)
+    get_the_label(df)
     df.to_csv('./MBTIv2.csv')
