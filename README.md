@@ -1,3 +1,12 @@
+# Avalible model
+| name     | description   |
+| --       | ---           |
+| cnn      | cnn           |
+| new\_cnn | two level cnn |
+| lstm     | lstm + cnn    |
+| zzw      | a test model  |
+
+
 # csv column
 |name | description|
 |-----|------------|
