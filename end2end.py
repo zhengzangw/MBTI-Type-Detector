@@ -15,7 +15,7 @@ from models import get_model
 
 MAX_LENGTH = 2000
 VOCAB_SIZE = 0
-MODEL_NAME = "lstm_model"
+MODEL_NAME = "new_cnn_model"
 
 def input_doc():
     global VOCAB_SIZE
