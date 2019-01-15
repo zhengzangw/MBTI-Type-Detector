@@ -13,7 +13,7 @@ LOGGER = get_logger("end2end")
 
 from models import get_model
 
-MAX_LENGTH = 2000
+MAX_LENGTH = 200
 VOCAB_SIZE = 0
 MODEL_NAME = ""
 
@@ -21,6 +21,7 @@ import argparse
 def parse_args():
     parser = argparse.ArgumentParser()
     parser.add_argument("--model", dest="model", type=str, help="Choose Your Model")
+    parser.add_argument("--classify", dest="classify", type=int, help="Choose The Classify Method")
     args = parser.parse_args()
     return args
 
@@ -76,6 +77,46 @@ def data_splitting(docs,labels):
     return trainX, trainY, valX, valY, testX, testY
 
 
+def testing(model, testX, testY, classify_type):
+    LOGGER.info("\n------------------------\n")
+    loss, _ = model.evaluate(testX, testY, verbose=1) # 不用它的accuracy
+    LOGGER.info("Loss on test set(10%) = {}".format(loss))
+
+    # 计算accuary
+    shape = testX.shape
+    counter_one_by_one = 0
+    counter_total = 0
+    X = model.predict(testX).tolist()
+    Y = testY.tolist()
+    shape = testY.shape
+
+    if classify_type == 4:
+        for i in range(shape[0]):
+            rowx = []
+            rowy = []
+            for j in range(shape[1]):
+                bx = X[i][j] > 0.5
+                by = Y[i][j] > 0.5
+                counter_one_by_one += int(bx == by)
+                rowx.append(rowx)
+                rowy.append(rowy)
+            counter_total += int(rowx == rowy)
+        LOGGER.info("Accuracy(Total) on test set(10%) = {}".format(counter_total))
+        LOGGER.info("Accuracy(One by one) on test set(10%) = {}".format(counter_one_by_one))
+    elif classify_type == 16:
+        for i in range(shape[0]):
+            val, whex, whey = -1e20, -1
+            for j in range(shape[1]):
+                if val < X[j]:
+                    val, whex = X[j], j
+            val = -1e20
+            for j in range(shape[1]):
+                if val < Y[j]:
+                    val, whey = Y[j], j
+            counter_total += int(whex == whey)
+        LOGGER.info("Accuracy(Total) on test set(10%) = {}".format(counter_total))
+
+
 if __name__=="__main__":
     args = parse_args()
     MODEL_NAME = args.model
@@ -99,12 +140,7 @@ if __name__=="__main__":
                         validation_data=(valX, valY))
 
     # Testing
-    loss, accuracy = model.evaluate(testX, testY, verbose=1)
-
-    # Print the results
-    LOGGER.info("\n------------------------\n")
-    LOGGER.info("Loss on test set(10%) = {}".format(loss))
-    LOGGER.info("Accuracy on test set(10%) = {}".format(accuracy))
+    testing(model, testX, testY, args.classify)
 
     # Save the model
     model.save(MODEL_NAME+".h5")
