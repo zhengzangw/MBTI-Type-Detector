@@ -74,13 +74,14 @@ def output_csv(df, file_name):
 # Main prework process for the whole dataset
 def prework(input_file, output_file = '', is_split_sentence = False, output = False):
     df = input_csv(input_file)
-    get_the_label(df)
     deal_with_seperator(df)
     deal_with_URL(df)
     deal_with_emoji(df)
     # selectable
     if is_split_sentence == True:
         df = split_sentence(df)
+    get_the_label(df)
+
     if output == True:
         output_csv(df, output_file)
     else:

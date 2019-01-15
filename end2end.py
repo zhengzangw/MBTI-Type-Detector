@@ -16,17 +16,19 @@ from models import get_model
 MAX_LENGTH = 2300
 VOCAB_SIZE = 0
 MODEL_NAME = ""
+CSV_NAME = "MBTIv1.csv"
 
 import argparse
 def parse_args():
     parser = argparse.ArgumentParser()
     parser.add_argument("--model", dest="model", type=str, help="Choose Your Model")
+    parser.add_argument("--seq", dest="is_seq", action='store_true', help="Is test on sequence")
     args = parser.parse_args()
     return args
 
 def input_doc():
     global VOCAB_SIZE
-    df = pd.read_csv('MBTIv1.csv')
+    df = pd.read_csv(CSV_NAME)
     df = shuffle(df)
 
     docs = df['posts']
@@ -79,6 +81,8 @@ def data_splitting(docs,labels):
 if __name__=="__main__":
     args = parse_args()
     MODEL_NAME = args.model
+    CSV_NAME = "MBTIv2.csv" if args.is_seq else "MBTIv1.csv"
+    MAX_LENGTH = 400 if args.is_seq else 2300
 
     t,padded_docs,labels = input_doc()
     embedding_matrix = get_embedding_matrix(t)
