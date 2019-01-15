@@ -66,6 +66,7 @@ def split_sentence(df):
             dict['posts'].append(item)
     return pd.DataFrame(dict)
 
+
 # Output the df file
 def output_csv(df, file_name):
     df.to_csv(file_name)
