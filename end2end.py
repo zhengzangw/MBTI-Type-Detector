@@ -23,6 +23,7 @@ def parse_args():
     parser = argparse.ArgumentParser()
     parser.add_argument("--model", dest="model", type=str, help="Choose Your Model")
     parser.add_argument("--seq", dest="is_seq", action='store_true', help="Is test on sequence")
+    parser.add_argument("--load", dest="loadpath", type=str, help="Load Model")
     args = parser.parse_args()
     return args
 
@@ -89,26 +90,36 @@ if __name__=="__main__":
 
     trainX,trainY,valX,valY,testX,testY = data_splitting(padded_docs,labels)
 
-    model = get_model(MODEL_NAME, VOCAB_SIZE, embedding_matrix, MAX_LENGTH)
-    # model = keras.models.load_model(MODEL_NAME+".h5")
-    model.summary(print_fn=LOGGER.info)
+    if args.loadpath is None:
+        model = get_model(MODEL_NAME, VOCAB_SIZE, embedding_matrix, MAX_LENGTH)
+        model.summary(print_fn=LOGGER.info)
 
-    callbacks = [keras.callbacks.EarlyStopping(monitor='val_loss', patience=5),
-                 keras.callbacks.ModelCheckpoint(filepath='best_model.h5', monitor='val_loss', save_best_only=True)]
-    model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
+        callbacks = [keras.callbacks.EarlyStopping(monitor='val_loss', patience=5),
+                     keras.callbacks.ModelCheckpoint(filepath='best_model.h5', monitor='val_loss', save_best_only=True)]
+        model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
 
-    # Training
-    LOGGER.info("Begin Training")
-    history = model.fit(trainX, trainY, epochs=30, callbacks=callbacks, verbose=1,
-                        validation_data=(valX, valY))
+        # Training
+        LOGGER.info("Begin Training")
+        history = model.fit(trainX, trainY, epochs=30, callbacks=callbacks, verbose=1,
+                            validation_data=(valX, valY))
 
-    # Testing
-    loss, accuracy = model.evaluate(testX, testY, verbose=1)
+        # Testing
+        loss, accuracy = model.evaluate(testX, testY, verbose=1)
 
-    # Print the results
-    LOGGER.info("\n------------------------\n")
-    LOGGER.info("Loss on test set(10%) = {}".format(loss))
-    LOGGER.info("Accuracy on test set(10%) = {}".format(accuracy))
+        # Print the results
+        LOGGER.info("\n------------------------\n")
+        LOGGER.info("Loss on test set(10%) = {}".format(loss))
+        LOGGER.info("Accuracy on test set(10%) = {}".format(accuracy))
 
-    # Save the model
-    model.save(MODEL_NAME+".h5")
+        # Save the model
+        model.save(MODEL_NAME+".h5")
+    else:
+        model = keras.models.load_model(args.loadpath)
+        t, padded_docs, labels = input_doc()
+        trainX, trainY, valX, valY, testX, testY = data_splitting(padded_docs, labels)
+        loss, accuracy = model.evaluate(trainX, trainY, verbose=1)
+
+        # Print the results
+        LOGGER.info("\n------------------------\n")
+        LOGGER.info("Loss on test set(10%) = {}".format(loss))
+        LOGGER.info("Accuracy on test set(10%) = {}".format(accuracy))
