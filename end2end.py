@@ -15,7 +15,14 @@ from models import get_model
 
 MAX_LENGTH = 2000
 VOCAB_SIZE = 0
-MODEL_NAME = "new_cnn_model"
+MODEL_NAME = ""
+
+import argparse
+def parse_args():
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--model", dest="model", type=str, help="Choose Your Model")
+    args = parser.parse_args()
+    return args
 
 def input_doc():
     global VOCAB_SIZE
@@ -70,6 +77,9 @@ def data_splitting(docs,labels):
 
 
 if __name__=="__main__":
+    args = parse_args()
+    MODEL_NAME = args.model
+
     t,padded_docs,labels = input_doc()
     embedding_matrix = get_embedding_matrix(t)
 
