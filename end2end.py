@@ -89,6 +89,7 @@ def testing(model, testX, testY, classify_type):
     X = model.predict(testX).tolist()
     Y = testY.tolist()
     shape = testY.shape
+    print("hhh{}".format(shape))
 
     if classify_type == 4:
         for i in range(shape[0]):
@@ -98,11 +99,11 @@ def testing(model, testX, testY, classify_type):
                 bx = X[i][j] > 0.5
                 by = Y[i][j] > 0.5
                 counter_one_by_one += int(bx == by)
-                rowx.append(rowx)
-                rowy.append(rowy)
+                rowx.append(bx)
+                rowy.append(by)
             counter_total += int(rowx == rowy)
-        LOGGER.info("Accuracy(Total) on test set(10%) = {}".format(counter_total))
-        LOGGER.info("Accuracy(One by one) on test set(10%) = {}".format(counter_one_by_one))
+        LOGGER.info("Accuracy(Total) on test set(10%) = {}".format(float(counter_total)/float(shape[0])))
+        LOGGER.info("Accuracy(One by one) on test set(10%) = {}".format((float(counter_one_by_one)/float(shape[0] * 4))))
     elif classify_type == 16:
         for i in range(shape[0]):
             val, whex, whey = -1e20, -1
@@ -114,7 +115,7 @@ def testing(model, testX, testY, classify_type):
                 if val < Y[j]:
                     val, whey = Y[j], j
             counter_total += int(whex == whey)
-        LOGGER.info("Accuracy(Total) on test set(10%) = {}".format(counter_total))
+        LOGGER.info("Accuracy(Total) on test set(10%) = {}".format(float(counter_total)/float(shape[0])))
 
 
 if __name__=="__main__":
