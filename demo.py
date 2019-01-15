@@ -1,19 +1,15 @@
 import tensorflow as tf
 from tensorflow import keras
-from sklearn.utils import shuffle
-import numpy as np
-import pandas as pd
 
 tf.set_random_seed(1234)
 
 import argparse
 def parse_args():
     parser = argparse.ArgumentParser()
-    parser.add_argument("--load", dest="loadpath", default="cnn_demo.h5", type=str, help="Load Model")
+    parser.add_argument("--load", dest="loadpath", default="cnn16seq.h5", type=str, help="Load Model")
     args = parser.parse_args()
     return args
 
-CSV_NAME = "MBTIv2.csv"
 MAX_LENGTH = 400
 
 import os
