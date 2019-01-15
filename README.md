@@ -1,9 +1,8 @@
 # Avalible model
-| name             | description                   | accuracy |
-| --               | ---                           | --       |
-| demo\_cnn        | one-level cnn                 | 75%      |
-| two\_level\_cnn  | cnn+maxpool+cnn+maxpool+dense |          |
-| two\_level\_lstm | lstm+lstm+dense               |          |
+| name | description                   | accuracy |
+| --   | ---                           | --       |
+| cnn  | cnn+maxpool+cnn+maxpool+dense | 75%      |
+| lstm | lstm+lstm+dense               |          |
 
 
 # csv column
