@@ -25,13 +25,20 @@ def parse_args():
     args = parser.parse_args()
     return args
 
-def input_doc():
+def input_doc(classify_type):
     global VOCAB_SIZE
     df = pd.read_csv('MBTIv1.csv')
     df = shuffle(df)
 
     docs = df['posts']
     labels = np.vstack([df['IE'], df['NS'], df['TF'], df['JP']]).transpose()
+    if classify_type == 16:
+        labels = labels[:, 0] * 8 + labels[:, 1] * 4 + labels[:, 2] * 2 + labels[:, 3]
+        tmp = np.zeros([labels.shape[0], 16])
+        for i in range(labels.shape[0]):
+            tmp[i, labels[i]] = 1
+        labels = tmp
+
 
     t = keras.preprocessing.text.Tokenizer()
     t.fit_on_texts(docs)
@@ -61,7 +68,7 @@ def get_embedding_matrix(t):
     return embedding_matrix
 
 
-def data_splitting(docs,labels):
+def data_splitting(docs, labels):
     num_instances = len(docs)
     d1 = int(num_instances * 0.8)
     d2 = int(num_instances * 0.9)
@@ -106,14 +113,14 @@ def testing(model, testX, testY, classify_type):
         LOGGER.info("Accuracy(One by one) on test set(10%) = {}".format((float(counter_one_by_one)/float(shape[0] * 4))))
     elif classify_type == 16:
         for i in range(shape[0]):
-            val, whex, whey = -1e20, -1
+            val, whex, whey = -1e20, -1, -1
             for j in range(shape[1]):
-                if val < X[j]:
-                    val, whex = X[j], j
+                if val < X[i][j]:
+                    val, whex = X[i][j], j
             val = -1e20
             for j in range(shape[1]):
-                if val < Y[j]:
-                    val, whey = Y[j], j
+                if val < Y[i][j]:
+                    val, whey = Y[i][j], j
             counter_total += int(whex == whey)
         LOGGER.info("Accuracy(Total) on test set(10%) = {}".format(float(counter_total)/float(shape[0])))
 
@@ -122,10 +129,10 @@ if __name__=="__main__":
     args = parse_args()
     MODEL_NAME = args.model
 
-    t,padded_docs,labels = input_doc()
+    t,padded_docs,labels = input_doc(args.classify)
     embedding_matrix = get_embedding_matrix(t)
 
-    trainX,trainY,valX,valY,testX,testY = data_splitting(padded_docs,labels)
+    trainX,trainY,valX,valY,testX,testY = data_splitting(padded_docs, labels)
 
     model = get_model(MODEL_NAME, VOCAB_SIZE, embedding_matrix, MAX_LENGTH, args.classify)
     # model = keras.models.load_model(MODEL_NAME+".h5")
@@ -133,7 +140,14 @@ if __name__=="__main__":
 
     callbacks = [keras.callbacks.EarlyStopping(monitor='val_loss', patience=3),
                  keras.callbacks.ModelCheckpoint(filepath='best_model.h5', monitor='val_loss', save_best_only=True)]
-    model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
+    
+    # 根据分类的函方式选择对应的函数
+    loss_func = ''
+    if args.classify == 4:
+        loss_func = 'binary_crossentropy'
+    elif args.classify == 16:
+        loss_func = 'categorical_crossentropy'
+    model.compile(loss = loss_func, optimizer='adam', metrics=['accuracy'])
 
     # Training
     LOGGER.info("Begin Training")
