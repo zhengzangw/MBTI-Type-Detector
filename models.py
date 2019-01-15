@@ -23,7 +23,6 @@ def demo_cnn(vocab_size,embedding_matrix,input_length):
     model.add(keras.layers.Dropout(0.2))
     model.add(keras.layers.Dense(4, activation='sigmoid'))
     return model
-# maxlen=2000: 75%
 
 def two_level_cnn(vocab_size,embedding_matrix,input_length):
     model = keras.Sequential()

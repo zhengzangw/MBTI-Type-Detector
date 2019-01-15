@@ -89,8 +89,8 @@ if __name__=="__main__":
     # model = keras.models.load_model(MODEL_NAME+".h5")
     model.summary(print_fn=LOGGER.info)
 
-    callbacks = [keras.callbacks.EarlyStopping(monitor='val_acc', patience=3),
-                 keras.callbacks.ModelCheckpoint(filepath='best_model.h5', monitor='val_acc', save_best_only=True)]
+    callbacks = [keras.callbacks.EarlyStopping(monitor='val_loss', patience=5),
+                 keras.callbacks.ModelCheckpoint(filepath='best_model.h5', monitor='val_loss', save_best_only=True)]
     model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
 
     # Training
