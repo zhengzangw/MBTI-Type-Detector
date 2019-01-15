@@ -1,10 +1,8 @@
 # Avalible model
-| name     | description   |
-| --       | ---           |
-| cnn      | cnn           |
-| new\_cnn | two level cnn |
-| lstm     | lstm + cnn    |
-| zzw      | a test model  |
+| name | description                   | accuracy |
+| --   | ---                           | --       |
+| cnn  | cnn+maxpool+cnn+maxpool+dense | 75%      |
+| lstm | lstm+lstm+dense               |          |
 
 
 # csv column

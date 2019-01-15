@@ -13,21 +13,25 @@ LOGGER = get_logger("end2end")
 
 from models import get_model
 
-MAX_LENGTH = 200
+MAX_LENGTH = 2300
 VOCAB_SIZE = 0
 MODEL_NAME = ""
+CSV_NAME = "MBTIv1.csv"
 
 import argparse
 def parse_args():
     parser = argparse.ArgumentParser()
     parser.add_argument("--model", dest="model", type=str, help="Choose Your Model")
+    parser.add_argument("--seq", dest="is_seq", action='store_true', help="Is test on sequence")
+    parser.add_argument("--load", dest="loadpath", type=str, help="Load Model")
+    parser.add_argument("--update_token", dest="utoken", action='store_true', help="Update Token or not")
     parser.add_argument("--classify", dest="classify", type=int, help="Choose The Classify Method")
     args = parser.parse_args()
     return args
 
 def input_doc(classify_type):
     global VOCAB_SIZE
-    df = pd.read_csv('MBTIv1.csv')
+    df = pd.read_csv(CSV_NAME)
     df = shuffle(df)
 
     docs = df['posts']
@@ -83,6 +87,9 @@ def data_splitting(docs, labels):
     testY = labels[d2:, :]
     return trainX, trainY, valX, valY, testX, testY
 
+import pickle
+def dump_tokenizer(t):
+    pickle.dump(t, open("tokenizer.p", "wb"))
 
 def testing(model, testX, testY, classify_type):
     LOGGER.info("\n------------------------\n")
@@ -133,34 +140,48 @@ def testing(model, testX, testY, classify_type):
 if __name__=="__main__":
     args = parse_args()
     MODEL_NAME = args.model
+    CSV_NAME = "MBTIv2.csv" if args.is_seq else "MBTIv1.csv"
+    MAX_LENGTH = 400 if args.is_seq else 2300
 
     t,padded_docs,labels = input_doc(args.classify)
     embedding_matrix = get_embedding_matrix(t)
+    dump_tokenizer(t)
 
     trainX,trainY,valX,valY,testX,testY = data_splitting(padded_docs, labels)
 
-    model = get_model(MODEL_NAME, VOCAB_SIZE, embedding_matrix, MAX_LENGTH, args.classify)
-    # model = keras.models.load_model(MODEL_NAME+".h5")
-    model.summary(print_fn=LOGGER.info)
+    if args.loadpath is None:
+        model = get_model(MODEL_NAME, VOCAB_SIZE, embedding_matrix, MAX_LENGTH, args.classify)
+        # model = keras.models.load_model(MODEL_NAME+".h5")
+        model.summary(print_fn=LOGGER.info)
 
-    callbacks = [keras.callbacks.EarlyStopping(monitor='val_loss', patience=3),
+        callbacks = [keras.callbacks.EarlyStopping(monitor='val_loss', patience=3),
                  keras.callbacks.ModelCheckpoint(filepath='best_model.h5', monitor='val_loss', save_best_only=True)]
     
-    # 根据分类的函方式选择对应的函数
-    loss_func = ''
-    if args.classify == 4:
-        loss_func = 'binary_crossentropy'
-    elif args.classify == 16:
-        loss_func = 'categorical_crossentropy'
-    model.compile(loss = loss_func, optimizer='adam', metrics=['accuracy'])
+        # 根据分类的函方式选择对应的函数
+        loss_func = ''
+        if args.classify == 4:
+            loss_func = 'binary_crossentropy'
+        elif args.classify == 16:
+            loss_func = 'categorical_crossentropy'
+        model.compile(loss = loss_func, optimizer='adam', metrics=['accuracy'])
 
-    # Training
-    LOGGER.info("Begin Training")
-    history = model.fit(trainX, trainY, epochs=20, callbacks=callbacks, verbose=1,
-                        validation_data=(valX, valY))
+        # Training
+        LOGGER.info("Begin Training")
+        history = model.fit(trainX, trainY, epochs=20, callbacks=callbacks, verbose=1,
+                            validation_data=(valX, valY))
 
-    # Testing
-    testing(model, testX, testY, args.classify)
+        # Testing
+        testing(model, testX, testY, args.classify)
 
-    # Save the model
-    model.save(MODEL_NAME+".h5")
+        # Save the model
+        model.save(MODEL_NAME+".h5")
+    else:
+        model = keras.models.load_model(args.loadpath)
+        t, padded_docs, labels = input_doc()
+        trainX, trainY, valX, valY, testX, testY = data_splitting(padded_docs, labels)
+        loss, accuracy = model.evaluate(trainX, trainY, verbose=1)
+
+        # Print the results
+        LOGGER.info("\n------------------------\n")
+        LOGGER.info("Loss on test set(10%) = {}".format(loss))
+        LOGGER.info("Accuracy on test set(10%) = {}".format(accuracy))
