@@ -21,6 +21,8 @@ MODEL_NAME = ""
 CSV_NAME = "MBTI.csv"
 CTYPE = 4
 IS_SEQ = False
+POS_CATEGORY = ['I', 'N', 'T', 'J']
+NEG_CATEGORY = ['E', 'S', 'P', 'F']
 
 # Parse args
 import argparse
@@ -68,6 +70,7 @@ def get_tokenizer(docs):
 # Encode and Pad docs
 def transfrom_doc(docs,tokenizer):
     encoded_docs = tokenizer.texts_to_sequences(docs)
+    # print(np.mean([len(x) for x in encoded_docs]))
     padded_docs = keras.preprocessing.sequence.pad_sequences(encoded_docs, maxlen=MAX_LENGTH, padding='post')
     return padded_docs
 
@@ -131,7 +134,7 @@ def testing(model, testX, testY):
             LOGGER.info(confusion[i].tolist())
         LOGGER.info("Accuracy(Total) on test set(10%) = {}".format(float(counter_total)/float(shape[0])))
         LOGGER.info("Accuracy(One by one) on test set(10%) = {}".format((float(counter_one_by_one)/float(shape[0] * 4))))
-        #LOGGER.info(confusion)
+        print_pr(confusion)
     elif CTYPE == 16:
         for i in range(shape[0]):
             val, whex, whey = -1e20, -1, -1
@@ -151,6 +154,19 @@ def calc_pr(predicted, ground_truth):
         cnt[predicted[i]][ground_truth[i]] += 1
     return cnt[0][0]/(cnt[0][0]+cnt[0][1]), cnt[0][0]/(cnt[0][0]+cnt[1][0]),\
            cnt[1][1]/(cnt[1][1]+cnt[1][0]), cnt[1][1]/(cnt[1][1]+cnt[0][1])
+
+def print_pr(confusion):
+    for i in range(4):
+        t = confusion[i]
+        p = t[0][0]/(t[0][0]+t[0][1]+1e-10)
+        r = t[0][0]/(t[0][0]+t[1][0]+1e-10)
+        print('[%s] precision: %.3f, recall: %.3f, f1: %.3f' % \
+              (POS_CATEGORY[i], p, r, 2.0/(1/p+1/r)))
+        p = t[1][1]/(t[1][1]+t[1][0]+1e-10)
+        r = t[1][1]/(t[1][1]+t[0][1]+1e-10)
+        print('[%s] precision: %.3f, recall: %.3f, f1: %.3f' % \
+              (NEG_CATEGORY[i], p, r, 2.0/(1/p+1/r)))
+
 
 def plot_pr_roc(model, testX, testY):
     X = model.predict(testX)
@@ -197,27 +213,26 @@ if __name__=="__main__":
     trainX,trainY,valX,valY,testX,testY = data_splitting(padded_docs, labels)
 
     if args.loadpath is None:
-        model = get_model(MODEL_NAME, VOCAB_SIZE, embedding_matrix, MAX_LENGTH, CTYPE)
-        model.summary(print_fn=LOGGER.info)
+
+        # Choose Evaluating Function
+        if CTYPE != 4 and CTYPE != 16:
+            assert (0)
+        loss_func = 'binary_crossentropy' if CTYPE == 4 else 'categorical_crossentropy'
 
         if args.is_early_stop:
-            callbacks = [keras.callbacks.EarlyStopping(monitor='val_loss', patience=3),
+            callbacks = [keras.callbacks.EarlyStopping(monitor='val_loss', patience=8),
                      keras.callbacks.ModelCheckpoint(filepath='best_model.h5', monitor='val_loss', save_best_only=True)]
         else:
             callbacks = None
-    
-        # Choose Evaluating Function
-        if CTYPE!=4 and CTYPE!=16:
-            assert(0)
-        loss_func = 'binary_crossentropy' if CTYPE==4 else 'categorical_crossentropy'
-        sgd = keras.optimizers.SGD(lr=0.001, decay=1e-6, momentum=0.9, nesterov=True)
-        adam = keras.optimizers.Adam()
-        model.compile(loss = loss_func, optimizer=adam, metrics=['accuracy'])
+
+        BATCH_SIZE = 1024
+        model = get_model(MODEL_NAME, VOCAB_SIZE, embedding_matrix, MAX_LENGTH, CTYPE, loss_func, BATCH_SIZE)
+        model.summary(print_fn=LOGGER.info)
 
         # Training
         LOGGER.info("Begin Training")
-        history = model.fit(trainX, trainY, epochs=30, verbose=1, callbacks=callbacks,
-                            validation_data=(valX, valY))
+        history = model.fit(trainX, trainY, epochs=80, verbose=1, callbacks=callbacks,
+                            validation_data=(valX, valY), batch_size=BATCH_SIZE)
 
         # Testing
         LOGGER.info("Begin Testing")
@@ -231,4 +246,4 @@ if __name__=="__main__":
     else:
         model = keras.models.load_model(args.loadpath)
         testing(model, testX, testY)
-        #plot_pr_roc(model, testX, testY)
+        # plot_pr_roc(model, testX, testY)
