@@ -5,7 +5,7 @@ LOGGER = get_logger("models")
 def get_model(name,vocab_size,embedding_matrix,input_length, classify_type):
     if  name=="zzw_cnn":
         return zzw_cnn(vocab_size,embedding_matrix,input_length, classify_type)
-    elif name=="lstm":
+    elif name=="zzw_lstm":
         return zzw_lstm(vocab_size,embedding_matrix,input_length, classify_type)
     else:
         LOGGER.error("no such model: {}".format(name))
@@ -38,7 +38,8 @@ def zzw_lstm(vocab_size,embedding_matrix,input_length, classify_type):
     model = keras.Sequential()
     e = keras.layers.Embedding(vocab_size, 50, weights=[embedding_matrix], input_length=input_length, trainable=False)
     model.add(e)
-    model.add(keras.layers.CuDNNLSTM(50, return_sequences=True, stateful=True))
+    model.add(keras.layers.CuDNNLSTM(50, return_sequences=True, stateful=True,
+                                     batch_input_shape=(32, input_length, 50)))
     model.add(keras.layers.CuDNNLSTM(50, return_sequences=True, stateful=True))
     model.add(keras.layers.CuDNNLSTM(50, return_sequences=False, stateful=True))
     model.add(keras.layers.Dense(classify_type, activation=final_active_func(classify_type)))
