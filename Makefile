@@ -1,4 +1,4 @@
-.PHONY: cnn, lstm, downcsv, cleanlog, downglove, generatecsv
+.PHONY: cleanlog, downcsv, downglove, cnn, cnns, rnn, rnns
 cleanlog:
 	rm -rf logs
 downcsv:
@@ -6,9 +6,11 @@ downcsv:
 downglove:
 	wget http://nlp.stanford.edu/data/wordvecs/glove.6B.zip
 	unzip glove.6B.zip
-generatecsv:
-	mv MBTIv0_tokenized.csv MBTIv0.csv
-	python cleandata.csv
-demo:
-	python -m cnn -s -c 16
-	python demo
+cnn:
+	python end2end.py -m zzw_cnn
+rnn:
+	python end2end.py -m zzw_lstm
+cnns:
+	python end2end.py -m zzw_cnn -s
+rnns:
+	python end2end.py -m zzw_lstm -s

@@ -114,9 +114,4 @@ def prework_tokenize(input_file, output_file):
     output_csv(df, output_file)
 
 if __name__ == '__main__':
-    # prework_tokenize('./MBTIv0.csv', './MBTIv1.csv')
-    df = pd.read_csv('./MBTIv0.csv')
-    df.to_csv('./MBTIv1.csv')
-    df = split_sentence(df)
-    get_the_label(df)
-    df.to_csv('./MBTIv2.csv')
+    pass

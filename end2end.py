@@ -12,22 +12,25 @@ from log_utils import get_logger
 LOGGER = get_logger("end2end")
 
 from models import get_model
+from cleandata import split_sentence, get_the_label
 
 # Glabol Variable
 MAX_LENGTH = 0
 VOCAB_SIZE = 0
 MODEL_NAME = ""
-CSV_NAME = ""
+CSV_NAME = "MBTI.csv"
 CTYPE = 4
+IS_SEQ = False
 
 # Parse args
 import argparse
 def parse_args():
     parser = argparse.ArgumentParser()
-    parser.add_argument("-m", "--model", dest="model", type=str, default="cnn", help="Choose Your Model")
+    parser.add_argument("-m", "--model", dest="model", type=str, default="zzw_lstm", help="Choose Your Model")
     parser.add_argument("-s", "--seq", dest="is_seq", action='store_true', help="Is test on sequence")
     parser.add_argument("-l", "--load", dest="loadpath", type=str, default=None, help="Load Model")
     parser.add_argument("-c", "--classify", dest="classify", type=int, default=4, help="Choose The Classify Method, 4/16")
+    parser.add_argument("-e", "--early", dest="is_early_stop", action='store_true', help="Open early stop")
     args = parser.parse_args()
     return args
 
@@ -40,6 +43,9 @@ def dump_tokenizer(t):
 def input_doc():
     df = pd.read_csv(CSV_NAME)
     df = shuffle(df)
+    if IS_SEQ:
+        df = split_sentence(df)
+        get_the_label(df)
 
     docs = df['posts']
     labels = np.vstack([df['IE'], df['NS'], df['TF'], df['JP']]).transpose()
@@ -85,19 +91,10 @@ def get_embedding_matrix(t):
     return embedding_matrix
 
 # Split Data
+from oversampling import oversampling_csv
 def data_splitting(docs, labels):
-    num_instances = len(docs)
-    d1 = int(num_instances * 0.8)
-    d2 = int(num_instances * 0.9)
-
-    trainX = docs[:d1]
-    trainY = labels[:d1, :]
-
-    valX = docs[d1:d2]
-    valY = labels[d1:d2, :]
-
-    testX = docs[d2:]
-    testY = labels[d2:, :]
+    global IS_SEQ
+    trainX, trainY, valX, valY, testX, testY = oversampling_csv(docs, labels, IS_SEQ)
     return trainX, trainY, valX, valY, testX, testY
 
 
@@ -106,17 +103,16 @@ def testing(model, testX, testY):
     loss, _ = model.evaluate(testX, testY, verbose=1) # 不用它的accuracy
     LOGGER.info("Loss on test set(10%) = {}".format(loss))
 
-    # 计算accuary
-    shape = testX.shape
+    # accuary
     counter_sep = [0, 0, 0, 0]
     counter_one_by_one = 0
     counter_total = 0
     X = model.predict(testX).tolist()
     Y = testY.tolist()
     shape = testY.shape
-    print("hhh{}".format(shape))
 
     if CTYPE == 4:
+        confusion = np.zeros((4,2,2))
         for i in range(shape[0]):
             rowx = []
             rowy = []
@@ -125,14 +121,17 @@ def testing(model, testX, testY):
                 by = Y[i][j] > 0.5
                 counter_one_by_one += int(bx == by)
                 counter_sep[j] += int(bx == by)
+                confusion[j][int(bx)][int(by)] += 1
                 rowx.append(bx)
                 rowy.append(by)
             counter_total += int(rowx == rowy)
         cate = ['IE', 'NS', 'TF', 'NP']
         for i in range(4):
             LOGGER.info("Accuracy( for {} ) on test set(10%) = {}".format(cate[i], float(counter_sep[i])/float(shape[0])))
+            LOGGER.info(confusion[i].tolist())
         LOGGER.info("Accuracy(Total) on test set(10%) = {}".format(float(counter_total)/float(shape[0])))
         LOGGER.info("Accuracy(One by one) on test set(10%) = {}".format((float(counter_one_by_one)/float(shape[0] * 4))))
+        #LOGGER.info(confusion)
     elif CTYPE == 16:
         for i in range(shape[0]):
             val, whex, whey = -1e20, -1, -1
@@ -146,14 +145,49 @@ def testing(model, testX, testY):
             counter_total += int(whex == whey)
         LOGGER.info("Accuracy(Total) on test set(10%) = {}".format(float(counter_total)/float(shape[0])))
 
+def calc_pr(predicted, ground_truth):
+    cnt = np.zeros((2,2))
+    for i in range(len(predicted)):
+        cnt[predicted[i]][ground_truth[i]] += 1
+    return cnt[0][0]/(cnt[0][0]+cnt[0][1]), cnt[0][0]/(cnt[0][0]+cnt[1][0]),\
+           cnt[1][1]/(cnt[1][1]+cnt[1][0]), cnt[1][1]/(cnt[1][1]+cnt[0][1])
+
+def plot_pr_roc(model, testX, testY):
+    X = model.predict(testX)
+    Y = testY
+    predicted = X[:, 3]
+    ground_truth = Y[:, 3]
+    #print(predicted)
+    #print(ground_truth)
+    threshold_list = [1.0 * i / 100 for i in range(1, 100)]
+    precision = []
+    recall = []
+    pre1 = []
+    rec1 = []
+    for thres in threshold_list:
+        predicted_with_thres = [int(item > thres) for item in predicted]
+        p, r, p1, r1 = calc_pr(predicted_with_thres, ground_truth)
+        precision.append(p)
+        recall.append(r)
+        pre1.append(p1)
+        rec1.append(r1)
+    import matplotlib.pyplot as plt
+    fig, (ax1, ax2) = plt.subplots(1,2,figsize=(10, 5))
+    ax1.plot(recall, precision)
+    ax2.plot(rec1, pre1)
+    ax1.axis([0, 1, 0, 1])
+    ax2.axis([0,1,0,1])
+    plt.show()
+    #fig = plt.figure(fig)
 
 if __name__=="__main__":
     args = parse_args()
     MODEL_NAME = args.model
-    CSV_NAME = "MBTIv2.csv" if args.is_seq else "MBTIv1.csv"
-    MAX_LENGTH = 400 if args.is_seq else 2300
+    IS_SEQ = args.is_seq
+    MAX_LENGTH = 400 if IS_SEQ else 2300
     CTYPE = args.classify
 
+    # Load Data
     docs, labels = input_doc()
     tokenizer = get_tokenizer(docs)
     VOCAB_SIZE = len(tokenizer.word_index) + 1
@@ -166,21 +200,27 @@ if __name__=="__main__":
         model = get_model(MODEL_NAME, VOCAB_SIZE, embedding_matrix, MAX_LENGTH, CTYPE)
         model.summary(print_fn=LOGGER.info)
 
-        callbacks = [keras.callbacks.EarlyStopping(monitor='val_loss', patience=3),
-                 keras.callbacks.ModelCheckpoint(filepath='best_model.h5', monitor='val_loss', save_best_only=True)]
+        if args.is_early_stop:
+            callbacks = [keras.callbacks.EarlyStopping(monitor='val_loss', patience=3),
+                     keras.callbacks.ModelCheckpoint(filepath='best_model.h5', monitor='val_loss', save_best_only=True)]
+        else:
+            callbacks = None
     
         # Choose Evaluating Function
         if CTYPE!=4 and CTYPE!=16:
             assert(0)
         loss_func = 'binary_crossentropy' if CTYPE==4 else 'categorical_crossentropy'
-        model.compile(loss = loss_func, optimizer='adam', metrics=['accuracy'])
+        sgd = keras.optimizers.SGD(lr=0.001, decay=1e-6, momentum=0.9, nesterov=True)
+        adam = keras.optimizers.Adam()
+        model.compile(loss = loss_func, optimizer=adam, metrics=['accuracy'])
 
         # Training
         LOGGER.info("Begin Training")
-        history = model.fit(trainX, trainY, epochs=10, callbacks=callbacks, verbose=1,
+        history = model.fit(trainX, trainY, epochs=30, verbose=1, callbacks=callbacks,
                             validation_data=(valX, valY))
 
         # Testing
+        LOGGER.info("Begin Testing")
         testing(model, testX, testY)
 
         # Save the model
@@ -191,3 +231,4 @@ if __name__=="__main__":
     else:
         model = keras.models.load_model(args.loadpath)
         testing(model, testX, testY)
+        #plot_pr_roc(model, testX, testY)
