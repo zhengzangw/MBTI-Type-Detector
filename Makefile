@@ -9,8 +9,8 @@ downglove:
 cnn:
 	python end2end.py -mcnn
 rnn:
-	python end2end.py -mrnn
+	python end2end.py -mlstm
 cnns:
 	python end2end.py -mcnn -s
 rnns:
-	python end2end.py -mrnn -s
+	python end2end.py -mlstm -s
