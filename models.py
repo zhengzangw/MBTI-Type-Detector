@@ -27,9 +27,6 @@ def zzw_cnn(vocab_size,embedding_matrix,input_length, classify_type, loss_functi
     model = keras.Sequential()
     e = keras.layers.Embedding(vocab_size, 50, weights=[embedding_matrix], input_length=input_length, trainable=False)
     model.add(e)
-    #model.add(keras.layers.Conv1D(128, 3, padding='valid', activation='sigmoid', strides=1,
-    #                              kernel_regularizer=keras.regularizers.l2(0.01),
-    #                              kernel_initializer=keras.initializers.glorot_normal()))
     model.add(keras.layers.Conv1D(128, 5, padding='valid', activation='relu', strides=1))
     model.add(keras.layers.MaxPool1D(3))
     model.add(keras.layers.Conv1D(128, 5, padding='valid', activation='relu', strides=1))
@@ -42,16 +39,6 @@ def zzw_cnn(vocab_size,embedding_matrix,input_length, classify_type, loss_functi
     model.compile(loss=loss_function, optimizer=sgd, metrics=['accuracy'])
     return model
 
-def zzw_lstm(vocab_size,embedding_matrix,input_length, classify_type, loss_function, batch_size):
-    model = keras.Sequential()
-    e = keras.layers.Embedding(vocab_size, 50, weights=[embedding_matrix], input_length=input_length, trainable=False)
-    model.add(e)
-    model.add(keras.layers.CuDNNLSTM(50, return_sequences=True))
-    model.add(keras.layers.CuDNNLSTM(50, return_sequences=True))
-    model.add(keras.layers.CuDNNLSTM(50, return_sequences=False))
-    model.add(keras.layers.Dense(classify_type, activation=final_active_func(classify_type)))
-    model.compile(loss=loss_function, optimizer='rmsprop', metrics=['accuracy'])
-    return model
 
 def yeqy_cnn_single(vocab_size,embedding_matrix,input_length, classify_type, loss_function):
     model = keras.Sequential()
@@ -64,4 +51,16 @@ def yeqy_cnn_single(vocab_size,embedding_matrix,input_length, classify_type, los
     model.add(keras.layers.Dense(classify_type, activation=final_active_func(classify_type), kernel_regularizer=keras.regularizers.l2(0.01), kernel_initializer=keras.initializers.glorot_normal()))
     #sgd = keras.optimizers.SGD(lr=0.001, decay=1e-6, momentum=0.9, nesterov=True)
     model.compile(loss=loss_function, optimizer='adam', metrics=['accuracy'])
+    return model
+
+
+def zzw_lstm(vocab_size,embedding_matrix,input_length, classify_type, loss_function, batch_size):
+    model = keras.Sequential()
+    e = keras.layers.Embedding(vocab_size, 50, weights=[embedding_matrix], input_length=input_length, trainable=False)
+    model.add(e)
+    model.add(keras.layers.CuDNNLSTM(50, return_sequences=True))
+    model.add(keras.layers.CuDNNLSTM(50, return_sequences=True))
+    model.add(keras.layers.CuDNNLSTM(50, return_sequences=False))
+    model.add(keras.layers.Dense(classify_type, activation=final_active_func(classify_type)))
+    model.compile(loss=loss_function, optimizer='rmsprop', metrics=['accuracy'])
     return model
