@@ -80,10 +80,10 @@ if __name__=="__main__":
 
     # Color Control
     red = [100,0,0,100]
-    green = [0,100,0,0]
+    green = [0,100,0,100]
     blue = [0,0,100,0]
     red_inc = [1 if persenality[0][0]>0.5 else -1,0,0,1 if persenality[0][3]>0.5 else -1]
-    green_inc = [0,1 if persenality[0][1]>0.5 else -1,0,0]
+    green_inc = [0,1 if persenality[0][1]>0.5 else -1,0,1 if persenality[0][3]>0.5 else -1]
     blue_inc = [0,0,1 if persenality[0][2]>0.5 else -1,0]
     for i in range(4):
         print("In {}th dimension, the sentense looks like:\n\t".format(i+1), end='')
