@@ -27,7 +27,10 @@ def zzw_cnn(vocab_size,embedding_matrix,input_length, classify_type, loss_functi
     model = keras.Sequential()
     e = keras.layers.Embedding(vocab_size, 50, weights=[embedding_matrix], input_length=input_length, trainable=False)
     model.add(e)
-    model.add(keras.layers.Conv1D(128, 5, padding='valid', activation='relu', strides=1))
+    model.add(keras.layers.Conv1D(128, 3, padding='valid', activation='sigmoid', strides=1,
+                                  kernel_regularizer=keras.regularizers.l2(0.01),
+                                  kernel_initializer=keras.initializers.glorot_normal()))
+    #model.add(keras.layers.Conv1D(128, 5, padding='valid', activation='relu', strides=1))
     model.add(keras.layers.MaxPool1D(3))
     model.add(keras.layers.Conv1D(128, 5, padding='valid', activation='relu', strides=1))
     model.add(keras.layers.MaxPool1D(5))
