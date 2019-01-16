@@ -89,21 +89,7 @@ def get_embedding_matrix(t):
 from oversampling import oversampling_csv
 def data_splitting(docs, labels):
     global IS_SEQ
-    trainvalX, trainvalY, testX, testY = oversampling_csv(docs, labels, IS_SEQ)
-    num_instances = len(trainvalX)
-    val_rate = int(num_instances * 0.8)
-    print(num_instances)
-
-    trainX = trainvalX[:val_rate]
-    trainY = trainvalY[:val_rate]
-
-    valX = trainvalX[val_rate:]
-    valY = trainvalY[val_rate:]
-
-    print(valY[:10])
-    print(valX[:10])
-
-
+    trainX, trainY, valX, valY, testX, testY = oversampling_csv(docs, labels, IS_SEQ)
     return trainX, trainY, valX, valY, testX, testY
 
 
