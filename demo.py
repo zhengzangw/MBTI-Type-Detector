@@ -87,8 +87,7 @@ def gen_color(sentence):
     green_inc = [0,1 if persenality[0][1]>0.5 else -1,0,0]
     blue_inc = [0,0,1 if persenality[0][2]>0.5 else -1,0]
     yellow_inc = [0, 0, 0, 1 if persenality[0][2]>0.5 else -1]
-    ans_dict = {'red': [], 'green': [], 'blue': [], 'yellow': []}
-    cate = ['red', 'green', 'blue', 'yellow']
+    ans_dict = {0: [], 1: [], 2: [], 3: []}
     for i in range(4):
         print("In {}th dimension, the sentense looks like:\n\t".format(i+1), end='')
         for t in range(docs_len):
@@ -98,13 +97,16 @@ def gen_color(sentence):
             Y = int(yellow[i] + 5 * modified_persenality_dict[t][0][i] * 1000 * yellow_inc[i])
             G += int(float(Y)/2)
             R += int(float(Y)/2)
-            ans_dict[cate[i]].append([R, G, B])
+            ans_dict[i].append([reverse_word_map[padded_docs[0][t]], [R, G, B]])
             print(fg(int(red[i]+5*modified_persenality_dict[t][0][i]*1000*red_inc[i]),
                      int(green[i]+5*modified_persenality_dict[t][0][i]*1000*green_inc[i]),
                      int(blue[i]+5*modified_persenality_dict[t][0][i]*1000*blue_inc[i]))
                   + reverse_word_map[padded_docs[0][t]] + fg.rs,end=' ')
         print()
-    return ans_dict
+    persenality_ret = []
+    for i in range(4):
+        persenality_ret.append(0 if persenality[0][i] > 0.5 else 1)
+    return ans_dict, persenality_ret
 
 if __name__=="__main__":
     load_model_and_data(args.loadpath)
