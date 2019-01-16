@@ -21,6 +21,8 @@ MODEL_NAME = ""
 CSV_NAME = "MBTI.csv"
 CTYPE = 4
 IS_SEQ = False
+POS_CATEGORY = ['I', 'N', 'T', 'J']
+NEG_CATEGORY = ['E', 'S', 'P', 'F']
 
 # Parse args
 import argparse
@@ -131,7 +133,7 @@ def testing(model, testX, testY):
             LOGGER.info(confusion[i].tolist())
         LOGGER.info("Accuracy(Total) on test set(10%) = {}".format(float(counter_total)/float(shape[0])))
         LOGGER.info("Accuracy(One by one) on test set(10%) = {}".format((float(counter_one_by_one)/float(shape[0] * 4))))
-        #LOGGER.info(confusion)
+        print_pr(confusion)
     elif CTYPE == 16:
         for i in range(shape[0]):
             val, whex, whey = -1e20, -1, -1
@@ -151,6 +153,19 @@ def calc_pr(predicted, ground_truth):
         cnt[predicted[i]][ground_truth[i]] += 1
     return cnt[0][0]/(cnt[0][0]+cnt[0][1]), cnt[0][0]/(cnt[0][0]+cnt[1][0]),\
            cnt[1][1]/(cnt[1][1]+cnt[1][0]), cnt[1][1]/(cnt[1][1]+cnt[0][1])
+
+def print_pr(confusion):
+    for i in range(4):
+        t = confusion[i]
+        p = t[0][0]/(t[0][0]+t[0][1]+1e-10)
+        r = t[0][0]/(t[0][0]+t[1][0]+1e-10)
+        print('[%s] precision: %.3f, recall: %.3f, f1: %.3f' % \
+              (POS_CATEGORY[i], p, r, 2.0/(1/p+1/r)))
+        p = t[1][1]/(t[1][1]+t[1][0]+1e-10)
+        r = t[1][1]/(t[1][1]+t[0][1]+1e-10)
+        print('[%s] precision: %.3f, recall: %.3f, f1: %.3f' % \
+              (NEG_CATEGORY[i], p, r, 2.0/(1/p+1/r)))
+
 
 def plot_pr_roc(model, testX, testY):
     X = model.predict(testX)
