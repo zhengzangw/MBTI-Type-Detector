@@ -200,7 +200,7 @@ if __name__=="__main__":
     args = parse_args()
     MODEL_NAME = args.model
     IS_SEQ = args.is_seq
-    MAX_LENGTH = 400 if IS_SEQ else 1300
+    MAX_LENGTH = 400 if IS_SEQ else 2300
     CTYPE = args.classify
 
     # Load Data
