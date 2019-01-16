@@ -61,10 +61,10 @@ def oversampling_csv(docs, labels, is_seq=False):
     testY = labels[~msk]
 
     val_msk = np.random.rand(len(docs)) < 0.1
-    docs_val = docs[msk]
-    label_val = labels[msk]
-    docs_train = docs[~msk]
-    label_train = labels[~msk]
+    docs_val = docs[val_msk]
+    label_val = labels[val_msk]
+    docs_train = docs[~val_msk]
+    label_train = labels[~val_msk]
 
     # Train
     trainX = None
