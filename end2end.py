@@ -12,6 +12,7 @@ from log_utils import get_logger
 LOGGER = get_logger("end2end")
 
 from models import get_model
+from cleandata import split_sentence, get_the_label
 
 # Glabol Variable
 MAX_LENGTH = 0
@@ -41,6 +42,9 @@ def dump_tokenizer(t):
 def input_doc():
     df = pd.read_csv(CSV_NAME)
     df = shuffle(df)
+    if IS_SEQ:
+        df = split_sentence(df)
+        get_the_label(df)
 
     docs = df['posts']
     labels = np.vstack([df['IE'], df['NS'], df['TF'], df['JP']]).transpose()
