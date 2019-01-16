@@ -30,6 +30,7 @@ def parse_args():
     parser.add_argument("-s", "--seq", dest="is_seq", action='store_true', help="Is test on sequence")
     parser.add_argument("-l", "--load", dest="loadpath", type=str, default=None, help="Load Model")
     parser.add_argument("-c", "--classify", dest="classify", type=int, default=4, help="Choose The Classify Method, 4/16")
+    parser.add_argument("-e", "--early", dest="is_early_stop", action='store_true', help="Open early stop")
     args = parser.parse_args()
     return args
 
@@ -199,8 +200,11 @@ if __name__=="__main__":
         model = get_model(MODEL_NAME, VOCAB_SIZE, embedding_matrix, MAX_LENGTH, CTYPE)
         model.summary(print_fn=LOGGER.info)
 
-        callbacks = [keras.callbacks.EarlyStopping(monitor='val_loss', patience=3),
-                 keras.callbacks.ModelCheckpoint(filepath='best_model.h5', monitor='val_loss', save_best_only=True)]
+        if args.is_early_stop:
+            callbacks = [keras.callbacks.EarlyStopping(monitor='val_loss', patience=3),
+                     keras.callbacks.ModelCheckpoint(filepath='best_model.h5', monitor='val_loss', save_best_only=True)]
+        else:
+            callbacks = None
     
         # Choose Evaluating Function
         if CTYPE!=4 and CTYPE!=16:
@@ -211,11 +215,10 @@ if __name__=="__main__":
 
         # Training
         LOGGER.info("Begin Training")
-        #callbacks=callbacks,
-        history = model.fit(trainX, trainY, epochs=10, verbose=1,
+        history = model.fit(trainX, trainY, epochs=20, verbose=1, callbacks=callbacks,
                             validation_data=(valX, valY))
-
         # Testing
+        LOGGER.info("Begin Testing")
         testing(model, testX, testY)
 
         # Save the model
