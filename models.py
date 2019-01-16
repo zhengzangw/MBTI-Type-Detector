@@ -61,10 +61,10 @@ def yeqy_cnn_single(vocab_size,embedding_matrix,input_length, classify_type, los
     model = keras.Sequential()
     e = keras.layers.Embedding(vocab_size, 50, weights=[embedding_matrix], input_length=input_length, trainable=False)
     model.add(e)
-    model.add(keras.layers.Conv1D(128, 3, padding='valid', activation='sigmoid', strides=1))
+    model.add(keras.layers.Conv1D(128, 3, padding='valid', activation='sigmoid', strides=1, kernel_regularizer=keras.regularizers.l2(0.01), kernel_initializer=keras.initializers.glorot_normal()))
     model.add(keras.layers.GlobalMaxPool1D())
     #model.add(keras.layers.Dense(128, activation='sigmoid'))
-    model.add(keras.layers.Dense(classify_type, activation=final_active_func(classify_type)))
+    model.add(keras.layers.Dense(classify_type, activation=final_active_func(classify_type), kernel_regularizer=keras.regularizers.l2(0.01), kernel_initializer=keras.initializers.glorot_normal()))
     #sgd = keras.optimizers.SGD(lr=0.001, decay=1e-6, momentum=0.9, nesterov=True)
     model.compile(loss=loss_function, optimizer='adam', metrics=['accuracy'])
     return model
