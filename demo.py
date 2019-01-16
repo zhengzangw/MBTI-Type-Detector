@@ -3,6 +3,8 @@ os.environ['KMP_DUPLICATE_LIB_OK']='True'
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
 import tensorflow as tf
 from tensorflow import keras
+import pandas as pd
+from cleandata import deal_with_URL, deal_with_emoji
 
 tf.set_random_seed(1234)
 
@@ -16,7 +18,7 @@ def parse_args():
 from log_utils import get_logger
 LOGGER = get_logger("demos")
 
-MAX_LENGTH = 400
+MAX_LENGTH = 2300
 
 import pickle
 
@@ -41,8 +43,16 @@ if __name__=="__main__":
     model = keras.models.load_model(args.loadpath)
 
     tokenizer = pickle.load(open("tokenizer.p", "rb"))
-
     sentence = input('Please Input a sentence: ')
+
+    df = pd.DataFrame(columns=['posts'])
+    df.loc[0] = [sentence]
+    deal_with_URL(df)
+    deal_with_emoji(df)
+    sentence = df['posts'][0]
+    sentence = sentence.replace(',',' , ').replace('.', ' . ').replace('  ',' ')
+    print('Processed Sentence: ', sentence)
+
     encoded_docs = tokenizer.texts_to_sequences([sentence])
     docs_len = len(encoded_docs[0])
     padded_docs = keras.preprocessing.sequence.pad_sequences(encoded_docs, maxlen=MAX_LENGTH, padding='post')
