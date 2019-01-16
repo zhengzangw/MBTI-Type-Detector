@@ -78,6 +78,7 @@ if __name__=="__main__":
     from sty import fg
     reverse_word_map = dict(map(reversed, tokenizer.word_index.items()))
 
+    # Color Control
     red = [100,0,0,100]
     green = [0,100,0,0]
     blue = [0,0,100,0]

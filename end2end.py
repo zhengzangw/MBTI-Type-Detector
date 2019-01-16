@@ -207,7 +207,8 @@ if __name__=="__main__":
 
         # Training
         LOGGER.info("Begin Training")
-        history = model.fit(trainX, trainY, epochs=10, callbacks=callbacks, verbose=1,
+        #callbacks=callbacks,
+        history = model.fit(trainX, trainY, epochs=10, verbose=1,
                             validation_data=(valX, valY))
 
         # Testing
