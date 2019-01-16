@@ -210,13 +210,14 @@ if __name__=="__main__":
         if CTYPE!=4 and CTYPE!=16:
             assert(0)
         loss_func = 'binary_crossentropy' if CTYPE==4 else 'categorical_crossentropy'
-        sgd = keras.optimizers.SGD(lr=0.01, decay=1e-6, momentum=0.9, nesterov=True)
+        sgd = keras.optimizers.SGD(lr=0.001, decay=1e-6, momentum=0.9, nesterov=True)
         model.compile(loss = loss_func, optimizer=sgd, metrics=['accuracy'])
 
         # Training
         LOGGER.info("Begin Training")
-        history = model.fit(trainX, trainY, epochs=20, verbose=1, callbacks=callbacks,
+        history = model.fit(trainX, trainY, epochs=30, verbose=1, callbacks=callbacks,
                             validation_data=(valX, valY))
+
         # Testing
         LOGGER.info("Begin Testing")
         testing(model, testX, testY)
