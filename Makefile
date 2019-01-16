@@ -16,4 +16,4 @@ rnns:
 	python end2end.py -m zzw_lstm -s
 tune:
 	git pull
-	python end2end.py -m zzw_cnn -s
+	python end2end.py -m zzw_cnn -e
