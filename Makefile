@@ -1,4 +1,4 @@
-.PHONY: cleanlog, downcsv, downglove
+.PHONY: cleanlog, downcsv, downglove, cnn, cnns, rnn, rnns
 cleanlog:
 	rm -rf logs
 downcsv:
@@ -6,3 +6,11 @@ downcsv:
 downglove:
 	wget http://nlp.stanford.edu/data/wordvecs/glove.6B.zip
 	unzip glove.6B.zip
+cnn:
+	python end2end.py -mcnn
+rnn:
+	python end2end.py -mrnn
+cnns:
+	python end2end.py -mcnn -s
+rnns:
+	python end2end.py -mrnn -s
