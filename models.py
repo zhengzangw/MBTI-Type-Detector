@@ -3,10 +3,10 @@ from log_utils import get_logger
 LOGGER = get_logger("models")
 
 def get_model(name,vocab_size,embedding_matrix,input_length, classify_type):
-    if  name=="cnn":
-        return cnn(vocab_size,embedding_matrix,input_length, classify_type)
+    if  name=="zzw_cnn":
+        return zzw_cnn(vocab_size,embedding_matrix,input_length, classify_type)
     elif name=="lstm":
-        return lstm(vocab_size,embedding_matrix,input_length, classify_type)
+        return zzw_lstm(vocab_size,embedding_matrix,input_length, classify_type)
     else:
         LOGGER.error("no such model: {}".format(name))
         assert(0)
@@ -18,7 +18,7 @@ def final_active_func(classify_type):
     elif classify_type == 16:
         return 'softmax'
 
-def cnn(vocab_size,embedding_matrix,input_length, classify_type):
+def zzw_cnn(vocab_size,embedding_matrix,input_length, classify_type):
     model = keras.Sequential()
     e = keras.layers.Embedding(vocab_size, 50, weights=[embedding_matrix], input_length=input_length, trainable=False)
     model.add(e)
@@ -34,7 +34,7 @@ def cnn(vocab_size,embedding_matrix,input_length, classify_type):
     model.add(keras.layers.Dense(classify_type, activation=final_active_func(classify_type)))
     return model
 
-def lstm(vocab_size,embedding_matrix,input_length, classify_type):
+def zzw_lstm(vocab_size,embedding_matrix,input_length, classify_type):
     model = keras.Sequential()
     e = keras.layers.Embedding(vocab_size, 50, weights=[embedding_matrix], input_length=input_length, trainable=False)
     model.add(e)

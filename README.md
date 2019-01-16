@@ -2,6 +2,7 @@
 m: choose model  
 s: sequence by sequence  
 c: class(16/4)
+e: enable early stop
 
 # Avalible model
 | name | description                   | accuracy |

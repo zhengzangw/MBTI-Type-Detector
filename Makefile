@@ -7,10 +7,10 @@ downglove:
 	wget http://nlp.stanford.edu/data/wordvecs/glove.6B.zip
 	unzip glove.6B.zip
 cnn:
-	python end2end.py -mcnn
+	python end2end.py -m zzw_cnn
 rnn:
-	python end2end.py -mlstm
+	python end2end.py -m zzw_lstm
 cnns:
-	python end2end.py -mcnn -s
+	python end2end.py -m zzw_cnn -s
 rnns:
-	python end2end.py -mlstm -s
+	python end2end.py -m zzw_lstm -s
