@@ -61,8 +61,8 @@ def oversampling_csv(docs, labels, is_seq=False):
     testY = labels[~msk]
 
     val_msk = np.random.rand(len(docs)) < 0.1
-    docs_val = docs[val_msk]
-    label_val = labels[val_msk]
+    valX = docs[val_msk]
+    valY = labels[val_msk]
     docs_train = docs[~val_msk]
     label_train = labels[~val_msk]
 
@@ -88,28 +88,5 @@ def oversampling_csv(docs, labels, is_seq=False):
     c = list(zip(trainX, trainY))
     shuffle(c)
     trainX[:], trainY[:] = zip(*c)
-
-    # Val
-    valX = None
-    valY = None
-    u = list(weight.keys())
-    for i in range(len(u)):
-        msk = []
-        for label in label_val:
-            flag = True
-            for k in range(4):
-                if (MBTI_label[k][label[k]] not in u[i]):
-                    flag = False
-            msk.append(flag)
-
-        inc_valX = docs_val[msk].repeat(weight[u[i]], axis=0)
-        inc_valY = label_val[msk].repeat(weight[u[i]], axis=0)
-        print("{} contains {} samples".format(u[i], len(inc_valX)))
-        valX = np.append(valX, inc_valX, axis=0) if valX is not None else inc_valX
-        valY = np.append(valY, inc_valY, axis=0) if valY is not None else inc_valY
-
-    c = list(zip(valX, valY))
-    shuffle(c)
-    valX[:], valY[:] = zip(*c)
 
     return trainX, trainY, valX, valY, testX, testY
