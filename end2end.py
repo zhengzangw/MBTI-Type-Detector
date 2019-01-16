@@ -95,10 +95,14 @@ def data_splitting(docs, labels):
     print(num_instances)
 
     trainX = trainvalX[:val_rate]
-    trainY = trainvalY[:val_rate, :]
+    trainY = trainvalY[:val_rate]
 
     valX = trainvalX[val_rate:]
-    valY = trainvalY[val_rate:, :]
+    valY = trainvalY[val_rate:]
+
+    print(valY[:10])
+    print(valX[:10])
+
 
     return trainX, trainY, valX, valY, testX, testY
 

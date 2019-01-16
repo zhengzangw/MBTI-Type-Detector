@@ -1,6 +1,6 @@
 import pandas as pd
 import numpy as np
-from sklearn.utils import shuffle
+from random import shuffle
 
 a = {
     'INFP': 1832,
