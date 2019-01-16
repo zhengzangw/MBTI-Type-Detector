@@ -106,15 +106,13 @@ def testing(model, testX, testY):
     loss, _ = model.evaluate(testX, testY, verbose=1) # 不用它的accuracy
     LOGGER.info("Loss on test set(10%) = {}".format(loss))
 
-    # 计算accuary
-    shape = testX.shape
+    # accuary
     counter_sep = [0, 0, 0, 0]
     counter_one_by_one = 0
     counter_total = 0
     X = model.predict(testX).tolist()
     Y = testY.tolist()
     shape = testY.shape
-    print("hhh{}".format(shape))
 
     if CTYPE == 4:
         for i in range(shape[0]):
