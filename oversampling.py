@@ -74,8 +74,7 @@ def oversampling_csv(docs, labels, is_seq=False):
 
         inc_trainX = docs_train[msk].repeat(weight[u[i]], axis=0)
         inc_trainY = label_train[msk].repeat(weight[u[i]], axis=0)
-        #print(u[i])
-        #print("X={}, Y={}".format(len(inc_trainX), len(inc_trainY)))
+        print("{} contains {} samples".format(u[i],len(inc_trainX)))
         trainX = np.append(trainX, inc_trainX, axis=0) if trainX is not None else inc_trainX
         trainY = np.append(trainY, inc_trainY, axis=0) if trainY is not None else inc_trainY
 
