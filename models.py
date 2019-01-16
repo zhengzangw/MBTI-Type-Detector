@@ -35,6 +35,7 @@ def zzw_cnn(vocab_size,embedding_matrix,input_length, classify_type, loss_functi
     model.add(keras.layers.MaxPool1D(25))
     model.add(keras.layers.Flatten())
     model.add(keras.layers.Dense(128, activation='relu'))
+    model.add(keras.layers.Dense(64, activation='relu'))
     model.add(keras.layers.Dense(classify_type, activation=final_active_func(classify_type)))
     model.compile(loss=loss_function, optimizer='adam', metrics=['accuracy'])
     return model
@@ -52,9 +53,9 @@ def zzw_lstm(vocab_size,embedding_matrix,input_length, classify_type, loss_funct
 
 def yeqy_cnn_single(vocab_size,embedding_matrix,input_length, classify_type, loss_function):
     model = keras.Sequential()
-    e = keras.layers.Embedding(vocab_size, 50, weights=[embedding_matrix], input_length=input_length, trainable=False)
+    e = keras.layers.Embedding(vocab_size, 80, weights=[embedding_matrix], input_length=input_length, trainable=False)
     model.add(e)
-    model.add(keras.layers.Conv1D(128, 3, padding='valid', activation='sigmoid', strides=1))
+    model.add(keras.layers.Conv1D(128, 8, padding='valid', activation='sigmoid', strides=1))
     model.add(keras.layers.GlobalMaxPool1D())
     #model.add(keras.layers.Dense(128, activation='sigmoid'))
     model.add(keras.layers.Dense(classify_type, activation=final_active_func(classify_type)))
