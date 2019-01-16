@@ -212,7 +212,7 @@ if __name__=="__main__":
         loss_func = 'binary_crossentropy' if CTYPE==4 else 'categorical_crossentropy'
         sgd = keras.optimizers.SGD(lr=0.001, decay=1e-6, momentum=0.9, nesterov=True)
         adam = keras.optimizers.Adam()
-        model.compile(loss = loss_func, optimizer=adam, metrics=['accuracy'])
+        model.compile(loss = loss_func, optimizer=sgd, metrics=['accuracy'])
 
         # Training
         LOGGER.info("Begin Training")

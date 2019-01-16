@@ -7,6 +7,8 @@ def get_model(name,vocab_size,embedding_matrix,input_length, classify_type):
         return zzw_cnn(vocab_size,embedding_matrix,input_length, classify_type)
     elif name=="zzw_lstm":
         return zzw_lstm(vocab_size,embedding_matrix,input_length, classify_type)
+    elif name=='yeqy_cnn':
+        return yeqy_cnn_single(vocab_size,embedding_matrix,input_length, classify_type)
     else:
         LOGGER.error("no such model: {}".format(name))
         assert(0)
@@ -44,3 +46,12 @@ def zzw_lstm(vocab_size,embedding_matrix,input_length, classify_type):
     model.add(keras.layers.Dense(classify_type, activation=final_active_func(classify_type)))
     return model
 
+def yeqy_cnn_single(vocab_size,embedding_matrix,input_length, classify_type):
+    model = keras.Sequential()
+    e = keras.layers.Embedding(vocab_size, 50, weights=[embedding_matrix], input_length=input_length, trainable=False)
+    model.add(e)
+    model.add(keras.layers.Conv1D(128, 3, padding='valid', activation='sigmoid', strides=1))
+    model.add(keras.layers.GlobalMaxPool1D())
+    model.add(keras.layers.Dense(128, activation='sigmoid'))
+    model.add(keras.layers.Dense(classify_type, activation=final_active_func(classify_type)))
+    return model
