@@ -2,7 +2,7 @@ from tensorflow import keras
 from log_utils import get_logger
 LOGGER = get_logger("models")
 
-sgd = keras.optimizers.SGD(lr=0.1, decay=0.001, momentum=0.9, nesterov=True)
+sgd = keras.optimizers.SGD(lr=0.001, decay=0.01, momentum=0.9, nesterov=True)
 adam = keras.optimizers.Adam()
 
 def get_model(name,vocab_size,embedding_matrix,input_length, classify_type, loss_function, batch_size):
