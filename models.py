@@ -2,7 +2,7 @@ from tensorflow import keras
 from log_utils import get_logger
 LOGGER = get_logger("models")
 
-sgd = keras.optimizers.SGD(lr=0.001, decay=1e-6, momentum=0.9, nesterov=True)
+sgd = keras.optimizers.SGD(lr=0.01, decay=0.001, momentum=0.9, nesterov=True)
 adam = keras.optimizers.Adam()
 
 def get_model(name,vocab_size,embedding_matrix,input_length, classify_type, loss_function, batch_size):
@@ -39,7 +39,7 @@ def zzw_cnn(vocab_size,embedding_matrix,input_length, classify_type, loss_functi
     model.add(keras.layers.Flatten())
     model.add(keras.layers.Dense(128, activation='relu'))
     model.add(keras.layers.Dense(classify_type, activation=final_active_func(classify_type)))
-    model.compile(loss=loss_function, optimizer='adam', metrics=['accuracy'])
+    model.compile(loss=loss_function, optimizer=sgd, metrics=['accuracy'])
     return model
 
 def zzw_lstm(vocab_size,embedding_matrix,input_length, classify_type, loss_function, batch_size):
