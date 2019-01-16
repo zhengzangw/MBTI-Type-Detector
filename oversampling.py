@@ -1,6 +1,6 @@
 import pandas as pd
 import numpy as np
-from sklearn.model_selection import train_test_split
+from sklearn.utils import shuffle
 
 a = {
     'INFP': 1832,
@@ -78,5 +78,9 @@ def oversampling_csv(docs, labels, is_seq=False):
         #print("X={}, Y={}".format(len(inc_trainX), len(inc_trainY)))
         trainX = np.append(trainX, inc_trainX, axis=0) if trainX is not None else inc_trainX
         trainY = np.append(trainY, inc_trainY, axis=0) if trainY is not None else inc_trainY
+
+    c = list(zip(trainX, trainY))
+    shuffle(c)
+    trainX[:], trainY[:] = zip(*c)
 
     return trainX, trainY, testX, testY
