@@ -36,7 +36,7 @@ def zzw_cnn(vocab_size,embedding_matrix,input_length, classify_type, loss_functi
     model.add(keras.layers.Flatten())
     model.add(keras.layers.Dense(128, activation='relu'))
     model.add(keras.layers.Dense(classify_type, activation=final_active_func(classify_type)))
-    model.compile(loss=loss_function, optimizer=sgd, metrics=['accuracy'])
+    model.compile(loss=loss_function, optimizer='adam', metrics=['accuracy'])
     return model
 
 def zzw_lstm(vocab_size,embedding_matrix,input_length, classify_type, loss_function, batch_size):
