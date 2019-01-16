@@ -17,8 +17,9 @@ from models import get_model
 MAX_LENGTH = 0
 VOCAB_SIZE = 0
 MODEL_NAME = ""
-CSV_NAME = ""
+CSV_NAME = "MBTI.csv"
 CTYPE = 4
+IS_SEQ = False
 
 # Parse args
 import argparse
@@ -85,19 +86,20 @@ def get_embedding_matrix(t):
     return embedding_matrix
 
 # Split Data
+from oversampling import oversampling_csv
 def data_splitting(docs, labels):
-    num_instances = len(docs)
-    d1 = int(num_instances * 0.8)
-    d2 = int(num_instances * 0.9)
+    global IS_SEQ
+    trainvalX, trainvalY, testX, testY = oversampling_csv(docs, labels, IS_SEQ)
+    num_instances = len(trainvalX)
+    val_rate = int(num_instances * 0.8)
+    print(num_instances)
 
-    trainX = docs[:d1]
-    trainY = labels[:d1, :]
+    trainX = trainvalX[:val_rate]
+    trainY = trainvalY[:val_rate, :]
 
-    valX = docs[d1:d2]
-    valY = labels[d1:d2, :]
+    valX = trainvalX[val_rate:]
+    valY = trainvalY[val_rate:, :]
 
-    testX = docs[d2:]
-    testY = labels[d2:, :]
     return trainX, trainY, valX, valY, testX, testY
 
 
@@ -186,10 +188,11 @@ def plot_pr_roc(model, testX, testY):
 if __name__=="__main__":
     args = parse_args()
     MODEL_NAME = args.model
-    CSV_NAME = "MBTIv2.csv" if args.is_seq else "MBTIv1.csv"
-    MAX_LENGTH = 400 if args.is_seq else 2300
+    IS_SEQ = args.is_seq
+    MAX_LENGTH = 400 if IS_SEQ else 2300
     CTYPE = args.classify
 
+    # Load Data
     docs, labels = input_doc()
     tokenizer = get_tokenizer(docs)
     VOCAB_SIZE = len(tokenizer.word_index) + 1
