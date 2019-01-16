@@ -36,7 +36,7 @@ def lstm(vocab_size,embedding_matrix,input_length, classify_type):
     e = keras.layers.Embedding(vocab_size, 50, weights=[embedding_matrix], input_length=input_length, trainable=False)
     model.add(e)
     model.add(keras.layers.CuDNNLSTM(50, return_sequences=True))
-    model.add(keras.layers.CuDNNLSTM(50, return_sequences=False))
-    model.add(keras.layers.Dense(500))
+    model.add(keras.layers.CuDNNLSTM(100, return_sequences=False))
+    model.add(keras.layers.Dense(1000))
     model.add(keras.layers.Dense(classify_type, activation=final_active_func(classify_type)))
     return model
