@@ -174,7 +174,8 @@ if __name__=="__main__":
         if CTYPE!=4 and CTYPE!=16:
             assert(0)
         loss_func = 'binary_crossentropy' if CTYPE==4 else 'categorical_crossentropy'
-        model.compile(loss = loss_func, optimizer='adam', metrics=['accuracy'])
+        sgd = keras.optimizers.SGD(lr=0.01, decay=1e-6, momentum=0.9, nesterov=True)
+        model.compile(loss = loss_func, optimizer=sgd, metrics=['accuracy'])
 
         # Training
         LOGGER.info("Begin Training")
