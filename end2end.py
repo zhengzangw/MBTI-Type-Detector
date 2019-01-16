@@ -26,7 +26,7 @@ IS_SEQ = False
 import argparse
 def parse_args():
     parser = argparse.ArgumentParser()
-    parser.add_argument("-m", "--model", dest="model", type=str, default="zzw_lstm", help="Choose Your Model")
+    parser.add_argument("-m", "--model", dest="model", type=str, default="zzw_cnn", help="Choose Your Model")
     parser.add_argument("-s", "--seq", dest="is_seq", action='store_true', help="Is test on sequence")
     parser.add_argument("-l", "--load", dest="loadpath", type=str, default=None, help="Load Model")
     parser.add_argument("-c", "--classify", dest="classify", type=int, default=4, help="Choose The Classify Method, 4/16")
@@ -197,27 +197,26 @@ if __name__=="__main__":
     trainX,trainY,valX,valY,testX,testY = data_splitting(padded_docs, labels)
 
     if args.loadpath is None:
-        model = get_model(MODEL_NAME, VOCAB_SIZE, embedding_matrix, MAX_LENGTH, CTYPE)
-        model.summary(print_fn=LOGGER.info)
+
+        # Choose Evaluating Function
+        if CTYPE != 4 and CTYPE != 16:
+            assert (0)
+        loss_func = 'binary_crossentropy' if CTYPE == 4 else 'categorical_crossentropy'
 
         if args.is_early_stop:
             callbacks = [keras.callbacks.EarlyStopping(monitor='val_loss', patience=3),
                      keras.callbacks.ModelCheckpoint(filepath='best_model.h5', monitor='val_loss', save_best_only=True)]
         else:
             callbacks = None
-    
-        # Choose Evaluating Function
-        if CTYPE!=4 and CTYPE!=16:
-            assert(0)
-        loss_func = 'binary_crossentropy' if CTYPE==4 else 'categorical_crossentropy'
-        sgd = keras.optimizers.SGD(lr=0.001, decay=1e-6, momentum=0.9, nesterov=True)
-        adam = keras.optimizers.Adam()
-        model.compile(loss = loss_func, optimizer=adam, metrics=['accuracy'])
+
+        BATCH_SIZE = 1024
+        model = get_model(MODEL_NAME, VOCAB_SIZE, embedding_matrix, MAX_LENGTH, CTYPE, loss_func, BATCH_SIZE)
+        model.summary(print_fn=LOGGER.info)
 
         # Training
         LOGGER.info("Begin Training")
         history = model.fit(trainX, trainY, epochs=30, verbose=1, callbacks=callbacks,
-                            validation_data=(valX, valY))
+                            validation_data=(valX, valY), batch_size=BATCH_SIZE)
 
         # Testing
         LOGGER.info("Begin Testing")

@@ -2,11 +2,14 @@ from tensorflow import keras
 from log_utils import get_logger
 LOGGER = get_logger("models")
 
-def get_model(name,vocab_size,embedding_matrix,input_length, classify_type):
+sgd = keras.optimizers.SGD(lr=0.001, decay=1e-6, momentum=0.9, nesterov=True)
+adam = keras.optimizers.Adam()
+
+def get_model(name,vocab_size,embedding_matrix,input_length, classify_type, loss_function, batch_size):
     if  name=="zzw_cnn":
-        return zzw_cnn(vocab_size,embedding_matrix,input_length, classify_type)
+        return zzw_cnn(vocab_size,embedding_matrix,input_length, classify_type, loss_function, batch_size)
     elif name=="zzw_lstm":
-        return zzw_lstm(vocab_size,embedding_matrix,input_length, classify_type)
+        return zzw_lstm(vocab_size,embedding_matrix,input_length, classify_type, loss_function, batch_size)
     else:
         LOGGER.error("no such model: {}".format(name))
         assert(0)
@@ -18,7 +21,7 @@ def final_active_func(classify_type):
     elif classify_type == 16:
         return 'softmax'
 
-def zzw_cnn(vocab_size,embedding_matrix,input_length, classify_type):
+def zzw_cnn(vocab_size,embedding_matrix,input_length, classify_type, loss_function, batch_size):
     model = keras.Sequential()
     e = keras.layers.Embedding(vocab_size, 50, weights=[embedding_matrix], input_length=input_length, trainable=False)
     model.add(e)
@@ -31,16 +34,17 @@ def zzw_cnn(vocab_size,embedding_matrix,input_length, classify_type):
     model.add(keras.layers.Flatten())
     model.add(keras.layers.Dense(128, activation='relu'))
     model.add(keras.layers.Dense(classify_type, activation=final_active_func(classify_type)))
+    model.compile(loss=loss_function, optimizer='rmsprop', metrics=['accuracy'])
     return model
 
-def zzw_lstm(vocab_size,embedding_matrix,input_length, classify_type):
+def zzw_lstm(vocab_size,embedding_matrix,input_length, classify_type, loss_function, batch_size):
     model = keras.Sequential()
-    e = keras.layers.Embedding(vocab_size, 50, weights=[embedding_matrix], input_length=input_length, trainable=False,
-                                     batch_input_shape=(32, input_length, 50))
+    e = keras.layers.Embedding(vocab_size, 50, weights=[embedding_matrix], input_length=input_length, trainable=False)
     model.add(e)
-    model.add(keras.layers.CuDNNLSTM(50, return_sequences=True, stateful=True))
-    model.add(keras.layers.CuDNNLSTM(50, return_sequences=True, stateful=True))
-    model.add(keras.layers.CuDNNLSTM(50, return_sequences=False, stateful=True))
+    model.add(keras.layers.CuDNNLSTM(50, return_sequences=True))
+    model.add(keras.layers.CuDNNLSTM(50, return_sequences=True))
+    model.add(keras.layers.CuDNNLSTM(50, return_sequences=False))
     model.add(keras.layers.Dense(classify_type, activation=final_active_func(classify_type)))
+    model.compile(loss=loss_function, optimizer='rmsprop', metrics=['accuracy'])
     return model
 
