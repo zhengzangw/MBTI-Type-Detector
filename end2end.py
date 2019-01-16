@@ -70,6 +70,7 @@ def get_tokenizer(docs):
 # Encode and Pad docs
 def transfrom_doc(docs,tokenizer):
     encoded_docs = tokenizer.texts_to_sequences(docs)
+    # print(np.mean([len(x) for x in encoded_docs]))
     padded_docs = keras.preprocessing.sequence.pad_sequences(encoded_docs, maxlen=MAX_LENGTH, padding='post')
     return padded_docs
 
@@ -199,7 +200,7 @@ if __name__=="__main__":
     args = parse_args()
     MODEL_NAME = args.model
     IS_SEQ = args.is_seq
-    MAX_LENGTH = 400 if IS_SEQ else 2300
+    MAX_LENGTH = 400 if IS_SEQ else 1300
     CTYPE = args.classify
 
     # Load Data
@@ -245,4 +246,4 @@ if __name__=="__main__":
     else:
         model = keras.models.load_model(args.loadpath)
         testing(model, testX, testY)
-        #plot_pr_roc(model, testX, testY)
+        # plot_pr_roc(model, testX, testY)

@@ -28,11 +28,11 @@ def zzw_cnn(vocab_size,embedding_matrix,input_length, classify_type, loss_functi
     e = keras.layers.Embedding(vocab_size, 50, weights=[embedding_matrix], input_length=input_length, trainable=False)
     model.add(e)
     model.add(keras.layers.Conv1D(128, 5, padding='valid', activation='relu', strides=1))
-    model.add(keras.layers.MaxPool1D(5))
+    model.add(keras.layers.MaxPool1D(3))
     model.add(keras.layers.Conv1D(128, 5, padding='valid', activation='relu', strides=1))
     model.add(keras.layers.MaxPool1D(5))
     model.add(keras.layers.Conv1D(128, 5, padding='valid', activation='relu', strides=1))
-    model.add(keras.layers.MaxPool1D(35))
+    model.add(keras.layers.MaxPool1D(25))
     model.add(keras.layers.Flatten())
     model.add(keras.layers.Dense(128, activation='relu'))
     model.add(keras.layers.Dense(classify_type, activation=final_active_func(classify_type)))
@@ -50,13 +50,6 @@ def zzw_lstm(vocab_size,embedding_matrix,input_length, classify_type, loss_funct
     model.compile(loss=loss_function, optimizer='rmsprop', metrics=['accuracy'])
     return model
 
-def zzw_cnn_lstm(vocab_size,embedding_matrix,input_length, classify_type, loss_function, batch_size):
-    model = keras.Sequential()
-    e = keras.layers.Embedding(vocab_size, 50, weights=[embedding_matrix], input_length=input_length, trainable=False)
-    model.add(e)
-
-    return model
-
 def yeqy_cnn_single(vocab_size,embedding_matrix,input_length, classify_type, loss_function):
     model = keras.Sequential()
     e = keras.layers.Embedding(vocab_size, 50, weights=[embedding_matrix], input_length=input_length, trainable=False)
@@ -68,4 +61,3 @@ def yeqy_cnn_single(vocab_size,embedding_matrix,input_length, classify_type, los
     #sgd = keras.optimizers.SGD(lr=0.001, decay=1e-6, momentum=0.9, nesterov=True)
     model.compile(loss=loss_function, optimizer='adam', metrics=['accuracy'])
     return model
-
