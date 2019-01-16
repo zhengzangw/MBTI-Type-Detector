@@ -9,6 +9,8 @@ def get_model(name,vocab_size,embedding_matrix,input_length, classify_type):
         return lstm(vocab_size,embedding_matrix,input_length, classify_type)
     elif name=="test":
         return test(vocab_size,embedding_matrix,input_length, classify_type)
+    elif name=="attention":
+        return attention(vocab_size,embedding_matrix,input_length, classify_type)
     else:
         LOGGER.error("no such model: {}".format(name))
         assert(0)
@@ -46,8 +48,9 @@ def lstm(vocab_size,embedding_matrix,input_length, classify_type):
 def test(vocab_size,embedding_matrix,input_length, classify_type):
     model = keras.Sequential()
     e = keras.layers.Embedding(vocab_size, 50, weights=[embedding_matrix], input_length=input_length, trainable=False)
-    model.add(keras.layers.LSTM(32, return_sequences=True, input_shape=(input_length, 50)))  # 返回维度为 32 的向量序列
-    model.add(keras.layers.LSTM(32, return_sequences=True))  # 返回维度为 32 的向量序列
-    model.add(keras.layers.LSTM(32))  # 返回维度为 32 的单个向量
+    model.add(e)
+    model.add(keras.layers.CuDNNLSTM(32, return_sequences=True, input_shape=(input_length, 50)))  # 返回维度为 32 的向量序列
+    model.add(keras.layers.CuDNNLSTM(32, return_sequences=True))  # 返回维度为 32 的向量序列
+    model.add(keras.layers.CuDNNLSTM(32))  # 返回维度为 32 的单个向量
     model.add(keras.layers.Dense(classify_type, activation=final_active_func(classify_type)))
-    pass
+    return model
