@@ -117,6 +117,7 @@ def testing(model, testX, testY):
     print("hhh{}".format(shape))
 
     if CTYPE == 4:
+        confusion = np.zeros((4,2,2))
         for i in range(shape[0]):
             rowx = []
             rowy = []
@@ -125,14 +126,17 @@ def testing(model, testX, testY):
                 by = Y[i][j] > 0.5
                 counter_one_by_one += int(bx == by)
                 counter_sep[j] += int(bx == by)
+                confusion[j][int(bx)][int(by)] += 1
                 rowx.append(bx)
                 rowy.append(by)
             counter_total += int(rowx == rowy)
         cate = ['IE', 'NS', 'TF', 'NP']
         for i in range(4):
             LOGGER.info("Accuracy( for {} ) on test set(10%) = {}".format(cate[i], float(counter_sep[i])/float(shape[0])))
+            LOGGER.info(confusion[i].tolist())
         LOGGER.info("Accuracy(Total) on test set(10%) = {}".format(float(counter_total)/float(shape[0])))
         LOGGER.info("Accuracy(One by one) on test set(10%) = {}".format((float(counter_one_by_one)/float(shape[0] * 4))))
+        #LOGGER.info(confusion)
     elif CTYPE == 16:
         for i in range(shape[0]):
             val, whex, whey = -1e20, -1, -1
@@ -146,6 +150,40 @@ def testing(model, testX, testY):
             counter_total += int(whex == whey)
         LOGGER.info("Accuracy(Total) on test set(10%) = {}".format(float(counter_total)/float(shape[0])))
 
+def calc_pr(predicted, ground_truth):
+    cnt = np.zeros((2,2))
+    for i in range(len(predicted)):
+        cnt[predicted[i]][ground_truth[i]] += 1
+    return cnt[0][0]/(cnt[0][0]+cnt[0][1]), cnt[0][0]/(cnt[0][0]+cnt[1][0]),\
+           cnt[1][1]/(cnt[1][1]+cnt[1][0]), cnt[1][1]/(cnt[1][1]+cnt[0][1])
+
+def plot_pr_roc(model, testX, testY):
+    X = model.predict(testX)
+    Y = testY
+    predicted = X[:, 3]
+    ground_truth = Y[:, 3]
+    #print(predicted)
+    #print(ground_truth)
+    threshold_list = [1.0 * i / 100 for i in range(1, 100)]
+    precision = []
+    recall = []
+    pre1 = []
+    rec1 = []
+    for thres in threshold_list:
+        predicted_with_thres = [int(item > thres) for item in predicted]
+        p, r, p1, r1 = calc_pr(predicted_with_thres, ground_truth)
+        precision.append(p)
+        recall.append(r)
+        pre1.append(p1)
+        rec1.append(r1)
+    import matplotlib.pyplot as plt
+    fig, (ax1, ax2) = plt.subplots(1,2,figsize=(10, 5))
+    ax1.plot(recall, precision)
+    ax2.plot(rec1, pre1)
+    ax1.axis([0, 1, 0, 1])
+    ax2.axis([0,1,0,1])
+    plt.show()
+    #fig = plt.figure(fig)
 
 if __name__=="__main__":
     args = parse_args()
@@ -191,3 +229,4 @@ if __name__=="__main__":
     else:
         model = keras.models.load_model(args.loadpath)
         testing(model, testX, testY)
+        #plot_pr_roc(model, testX, testY)
