@@ -7,7 +7,7 @@ e: enable early stop
 # Avalible model
 | name | description                   | accuracy |
 | --   | ---                           | --       |
-| cnn  | cnn+maxpool+cnn+maxpool+dense | 75%      |
+| cnn  | cnn+maxpool+cnn+maxpool+dense |          |
 | lstm | lstm+lstm+dense               |          |
 
 
