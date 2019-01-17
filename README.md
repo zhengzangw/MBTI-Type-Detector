@@ -1,3 +1,15 @@
+# Introduction
+This is ML model trained to detect people's MBTI type based what they write down in their post. There is also a demo that you can put in your daily life setence to detect which type you may be and see which word sells you out.
+## MBTI dataset
+kaggle dataset: https://www.kaggle.com/datasnaek/mbti-type/kernels 
+The Myers-Briggs Type Indicator (MBTI) is a widely-used personality assessment tool. It has four pairs of preferences: 
+
+* Introversion/Extraversion
+* Intuition/Sensing
+* Feeling/Thinking
+* Perception/Judging
+
+
 # Run Demo
     make demo
     
