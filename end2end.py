@@ -225,7 +225,7 @@ if __name__=="__main__":
         else:
             callbacks = None
 
-        BATCH_SIZE = 256
+        BATCH_SIZE = 128
         model = get_model(MODEL_NAME, VOCAB_SIZE, embedding_matrix, MAX_LENGTH, CTYPE, loss_func, BATCH_SIZE)
         model.summary(print_fn=LOGGER.info)
 
