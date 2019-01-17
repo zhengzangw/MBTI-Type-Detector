@@ -1,8 +1,17 @@
 # Run Demo
     make demo
+    
+You need demo_cnn.h5, tokenizer.p to run the demo
+
+# Training model
+Add your model in models, then run
+
+    python end2end.py -m your_model_name [-e|-s|-c]
+    
+You need MBTI.csv, glove.6B.50d.txt to train the demo
 ___
-# Models list
-## yeqy_CNN
+# Model Infomation
+CNN info:
 
     [ 2019-01-17 07:05:59,126][end2end]
     Accuracy(Total) on test set(10%) = 0.5362232779097387

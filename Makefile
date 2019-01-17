@@ -1,4 +1,7 @@
-.PHONY: cleanlog, downcsv, downglove, demo
+.PHONY: demo, cleanlog, downcsv, downglove
+
+demo:
+	python interface.py
 
 cleanlog:
 	rm -rf logs
@@ -10,5 +13,3 @@ downglove:
 	wget http://nlp.stanford.edu/data/wordvecs/glove.6B.zip
 	unzip glove.6B.zip
 
-demo:
-	python interface.py
