@@ -2,7 +2,7 @@ from tensorflow import keras
 from log_utils import get_logger
 LOGGER = get_logger("models")
 
-sgd = keras.optimizers.SGD(lr=0.01, decay=0.001, momentum=0.9, nesterov=True)
+sgd = keras.optimizers.SGD(lr=0.001, decay=1e-6, momentum=0.9, nesterov=True)
 adam = keras.optimizers.Adam()
 
 def get_model(name,vocab_size,embedding_matrix,input_length, classify_type, loss_function, batch_size):
@@ -55,13 +55,13 @@ def zzw_lstm(vocab_size,embedding_matrix,input_length, classify_type, loss_funct
 
 def yeqy_cnn_single(vocab_size,embedding_matrix,input_length, classify_type, loss_function):
     model = keras.Sequential()
-    e = keras.layers.Embedding(vocab_size, 50, weights=[embedding_matrix], input_length=input_length, trainable=False)
+    e = keras.layers.Embedding(vocab_size, 50, weights=[embedding_matrix], input_length=input_length, trainable=True)
     model.add(e)
-    model.add(keras.layers.Conv1D(128, 8, padding='valid', activation='sigmoid', strides=1))
-    model.add(keras.layers.Conv1D(128, 3, padding='valid', activation='sigmoid', strides=1, kernel_regularizer=keras.regularizers.l2(0.01), kernel_initializer=keras.initializers.glorot_normal()))
+    ##model.add(keras.layers.Conv1D(128, 8, padding='valid', activation='sigmoid', strides=1))
+    model.add(keras.layers.Conv1D(256, 7, padding='valid', activation='relu', strides=1))#, bias_regularizer=keras.regularizers.l2(0.001), kernel_initializer=keras.initializers.glorot_normal()))
     model.add(keras.layers.GlobalMaxPool1D())
-    #model.add(keras.layers.Dense(128, activation='sigmoid'))
-    model.add(keras.layers.Dense(classify_type, activation=final_active_func(classify_type), kernel_regularizer=keras.regularizers.l2(0.01), kernel_initializer=keras.initializers.glorot_normal()))
+    model.add(keras.layers.Dense(256, activation='relu'))
+    model.add(keras.layers.Dense(classify_type, activation=final_active_func(classify_type)))#, bias_regularizer=keras.regularizers.l2(0.001), kernel_initializer=keras.initializers.glorot_normal()))
     #sgd = keras.optimizers.SGD(lr=0.001, decay=1e-6, momentum=0.9, nesterov=True)
     model.compile(loss=loss_function, optimizer='adam', metrics=['accuracy'])
     return model
