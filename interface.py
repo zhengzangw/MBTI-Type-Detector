@@ -1,7 +1,7 @@
 import tkinter as tk
 from PIL import Image, ImageTk
-import demo as vis
-#import randomColor as vis
+#import demo as vis
+import randomColor as vis
 
 # 用于16进制转换
 Dec2Hex = '0123456789abcdef'
@@ -14,7 +14,8 @@ PST = [['I', 'E'],
 
 class Application(tk.Frame):              
     def __init__(self, master=None):
-        tk.Frame.__init__(self, master, background='white')  
+        tk.Frame.__init__(self, master)  
+        self.tk_setPalette(background='white')
         self.grid()                       
         self.createWidgets()
         self.classType = 0 # 人格分类坐标
