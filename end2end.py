@@ -208,7 +208,7 @@ if __name__=="__main__":
     tokenizer = get_tokenizer(docs)
     VOCAB_SIZE = len(tokenizer.word_index) + 1
     padded_docs = transfrom_doc(docs, tokenizer)
-    embedding_matrix = get_embxedding_matrix(tokenizer)
+    embedding_matrix = get_embedding_matrix(tokenizer)
 
     trainX,trainY,valX,valY,testX,testY = data_splitting(padded_docs, labels)
 
