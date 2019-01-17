@@ -181,7 +181,7 @@ class Application(tk.Frame):
 
 
 if __name__ == '__main__':
-    vis.load_model_and_data("cnn16seq.h5")
+    vis.load_model_and_data("demo_cnn.h5")
     app = Application()                     
     app.master.title('Sample application')   
     app.mainloop()         
