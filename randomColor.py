@@ -1,4 +1,4 @@
-
+# Used for Debug the GUI interface
 from PIL import Image, ImageTk
 import random as rand
 
@@ -14,8 +14,8 @@ def gen_color(sentence):
         for t in range(docs_len):
             color = [0, 0, 0, 0] # R, G, B, Y
             color[i] = 100 + rand.randint(-100, 100)
-            color[1] += color[3] // 2
-            color[2] += color[3] // 2
+            color[0] += color[3] 
+            color[1] += color[3]
             ans_dict[i].append([sentence[t], [color[0], color[1], color[2]]])
     personality = []
     for i in range(4):

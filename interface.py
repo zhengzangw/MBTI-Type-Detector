@@ -14,7 +14,7 @@ PST = [['I', 'E'],
 
 class Application(tk.Frame):              
     def __init__(self, master=None):
-        tk.Frame.__init__(self, master)  
+        tk.Frame.__init__(self, master, background='white')  
         self.grid()                       
         self.createWidgets()
         self.classType = 0 # 人格分类坐标
@@ -106,12 +106,16 @@ class Application(tk.Frame):
 
     def __IESelected(self):
         self.classType = 0
+        self.refresh()
     def __NSSelected(self):
         self.classType = 1
+        self.refresh()
     def __TFSelected(self):
         self.classType = 2
+        self.refresh()
     def __JPSelected(self):
         self.classType = 3
+        self.refresh()
 
     # 初始化四分类的选择按钮
     def initClassButton(self):
