@@ -22,30 +22,30 @@ e: enable early stop
 |JP | J=1,P=0 |
 ___
 # Models list
-## CNN1
+## yeyq_CNN
 
-	model.add(keras.layers.Conv1D(128, 3, padding='valid', activation='relu', strides=1))
-   	model.add(keras.layers.MaxPool1D(2))
-   	model.add(keras.layers.Conv1D(64, 5, padding='valid', activation='relu', strides=2))
-   	model.add(keras.layers.MaxPool1D(2))
-   	model.add(keras.layers.Conv1D(64, 5, padding='valid', activation='relu', strides=3))
-   	model.add(keras.layers.GlobalMaxPool1D())
-   	model.add(keras.layers.Dropout(0.5))
-   	model.add(keras.layers.Dense(128, activation='relu'))
-
-    [ 2019-01-16 11:22:45,203][end2end] Loss on test set(10%) = 0.6260359627847649
-    [ 2019-01-16 11:22:45,415][end2end] Accuracy( for IE ) on test set(10%) = 0.7547605308713214
-    [ 2019-01-16 11:22:45,415][end2end] [[285.0, 299.0], [126.0, 1023.0]]
-    [ 2019-01-16 11:22:45,416][end2end] Accuracy( for NS ) on test set(10%) = 0.7882285054818234
-    [ 2019-01-16 11:22:45,416][end2end] [[227.0, 348.0], [19.0, 1139.0]]
-    [ 2019-01-16 11:22:45,416][end2end] Accuracy( for TF ) on test set(10%) = 0.6330063473744951
-    [ 2019-01-16 11:22:45,416][end2end] [[424.0, 121.0], [515.0, 673.0]]
-    [ 2019-01-16 11:22:45,416][end2end] Accuracy( for NP ) on test set(10%) = 0.7005193306405078
-    [ 2019-01-16 11:22:45,416][end2end] [[799.0, 263.0], [256.0, 415.0]]
-    [ 2019-01-16 11:22:45,416][end2end] Accuracy(Total) on test set(10%) = 0.33698788228505483
-    [ 2019-01-16 11:22:45,416][end2end] Accuracy(One by one) on test set(10%) = 0.7191286785920369
+	[ 2019-01-17 03:26:17,470][end2end] Loss on test set(10%) = 0.5259371216731888
+    [ 2019-01-17 03:26:17,694][end2end] Accuracy( for IE ) on test set(10%) = 0.6912867859203693
+    [ 2019-01-17 03:26:17,695][end2end] [[369.0, 493.0], [42.0, 829.0]]
+    [ 2019-01-17 03:26:17,695][end2end] Accuracy( for NS ) on test set(10%) = 0.8349682631275245
+    [ 2019-01-17 03:26:17,695][end2end] [[227.0, 267.0], [19.0, 1220.0]]
+    [ 2019-01-17 03:26:17,695][end2end] Accuracy( for TF ) on test set(10%) = 0.7686093479515291
+    [ 2019-01-17 03:26:17,695][end2end] [[638.0, 100.0], [301.0, 694.0]]
+    [ 2019-01-17 03:26:17,695][end2end] Accuracy( for NP ) on test set(10%) = 0.7386035776110791
+    [ 2019-01-17 03:26:17,695][end2end] [[835.0, 233.0], [220.0, 445.0]]
+    [ 2019-01-17 03:26:17,695][end2end] Accuracy(Total) on test set(10%) = 0.4402769763416042
+    [ 2019-01-17 03:26:17,695][end2end] Accuracy(One by one) on test set(10%) = 0.7583669936526255
+    [I] precision: 0.428, recall: 0.898, f1: 0.580
+    [E] precision: 0.952, recall: 0.627, f1: 0.756
+    [N] precision: 0.460, recall: 0.923, f1: 0.614
+    [S] precision: 0.985, recall: 0.820, f1: 0.895
+    [T] precision: 0.864, recall: 0.679, f1: 0.761
+    [P] precision: 0.697, recall: 0.874, f1: 0.776
+    [J] precision: 0.782, recall: 0.791, f1: 0.787
+    [F] precision: 0.669, recall: 0.656, f1: 0.663
     
-## CNN2
+## zzw_CNN
+
     model.add(keras.layers.Conv1D(128, 5, padding='valid', activation='relu', strides=1))
     model.add(keras.layers.MaxPool1D(3))
     model.add(keras.layers.Conv1D(128, 5, padding='valid', activation='relu', strides=1))
