@@ -46,7 +46,7 @@ def output_persenality(persenality, original=False):
             else:
                 print("\t{}:({:.1f})".format(MBTI_neg[t], 1-persenality[0][t]))
 
-def gen_color(sentence):
+def gen_color(sentence, for_wordcloud = False):
     df = pd.DataFrame(columns=['posts'])
     df.loc[0] = [sentence]
     deal_with_URL(df)
@@ -81,6 +81,10 @@ def gen_color(sentence):
     from sty import fg
     reverse_word_map = dict(map(reversed, tokenizer.word_index.items()))
 
+    # 只需要计算云图的情况
+    if for_wordcloud == True:
+        return persenality, reverse_word_map, padded_docs, modified_persenality_dict
+
     # Color Control
     red = [100,0,0,0]
     green = [0,100,0,0]
@@ -111,7 +115,8 @@ def gen_color(sentence):
         persenality_ret.append(0 if persenality[0][i] > 0.5 else 1)
     return ans_dict, persenality_ret
 
-def get_wordcloud(persenality, reverse_word_map, padded_docs, modified_persenality_dict):
+def get_wordcloud(sentence):
+    persenality, reverse_word_map, padded_docs, modified_persenality_dict = gen_color(sentence, True)
     import matplotlib.pyplot as plt
     from scipy.misc import imread
     from wordcloud import WordCloud, STOPWORDS

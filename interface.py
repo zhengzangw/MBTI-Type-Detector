@@ -1,6 +1,7 @@
 import tkinter as tk
 from PIL import Image, ImageTk
-import demo as vis
+#import demo as vis
+import randomColor as vis
 
 # 用于16进制转换
 Dec2Hex = '0123456789abcdef'
@@ -52,6 +53,7 @@ class Application(tk.Frame):
 
     # 将R,G, B颜色转化为16进制字符串表示
     def __convertHexColor(self, color):
+        color = [min(255, max(0, c)) for c in color] # 防止输入的颜色越界
         f = lambda c: Dec2Hex[c // 16]+ Dec2Hex[c % 16]
         return '#' + f(color[0]) + f(color[1]) + f(color[2])
 
@@ -158,7 +160,13 @@ class Application(tk.Frame):
 
     # 生成word graph
     def wordGraph(self):
-        pass
+        self.wordGraphFrame = tk.Toplevel(self)
+        self.wordGraphCanvas = tk.Canvas(master = self.wordGraphFrame, width = 800, height = 600)
+        self.wordGraphImage_PIL = vis.get_wordcloud(self.__dumpText())
+        self.wordGraphImage_PIL = self.__adaptImage(self.wordGraphImage_PIL, 800, 600)
+        self.wordGraphImage = ImageTk.PhotoImage(self.wordGraphImage_PIL)
+        self.wordGraphImageID = self.wordGraphCanvas.create_image(400, 300, image = self.wordGraphImage)
+        self.wordGraphCanvas.grid()
 
     def initWordGraphButton(self):
         self.wordGraphButton = tk.Button(self, text = 'word graph', command = self.wordGraph)

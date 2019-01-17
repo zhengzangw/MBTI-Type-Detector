@@ -1,5 +1,10 @@
 
+from PIL import Image, ImageTk
 import random as rand
+
+def load_model_and_data(path):
+    """no use here"""
+    pass
 
 def gen_color(sentence):
     sentence = sentence.split(' ')
@@ -16,3 +21,6 @@ def gen_color(sentence):
     for i in range(4):
         personality.append(rand.randint(0, 1))
     return ans_dict, personality
+
+def get_wordcloud(sentence):
+    return Image.open('pic/INTP.png')
