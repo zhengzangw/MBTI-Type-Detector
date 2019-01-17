@@ -13,7 +13,7 @@ from wordcloud import WordCloud, STOPWORDS
 import argparse
 def parse_args():
     parser = argparse.ArgumentParser()
-    parser.add_argument("--load", dest="loadpath", default="cnn16seq.h5", type=str, help="Load Model")
+    parser.add_argument("--load", dest="loadpath", default="demo_cnn.h5", type=str, help="Load Model")
     args = parser.parse_args()
     return args
 
@@ -22,7 +22,7 @@ args = parse_args()
 tf.set_random_seed(1234)
 from log_utils import get_logger
 LOGGER = get_logger("demos")
-MAX_LENGTH = 400
+MAX_LENGTH = 2300
 import pickle
 MBTI_pos = ['I', 'N', 'T', 'J']
 MBTI_neg = ['E', 'S', 'F', 'P']

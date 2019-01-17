@@ -242,7 +242,7 @@ if __name__=="__main__":
         SAVE_NAME = MODEL_NAME+str(CTYPE)
         if args.is_seq:
             SAVE_NAME += "seq"
-        model.save(MODEL_NAME+".h5")
+        model.save(SAVE_NAME+".h5")
     else:
         model = keras.models.load_model(args.loadpath)
         testing(model, testX, testY)
