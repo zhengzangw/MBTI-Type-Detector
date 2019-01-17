@@ -208,7 +208,7 @@ if __name__=="__main__":
     tokenizer = get_tokenizer(docs)
     VOCAB_SIZE = len(tokenizer.word_index) + 1
     padded_docs = transfrom_doc(docs, tokenizer)
-    embedding_matrix = get_embedding_matrix(tokenizer)
+    embedding_matrix = get_embxedding_matrix(tokenizer)
 
     trainX,trainY,valX,valY,testX,testY = data_splitting(padded_docs, labels)
 
@@ -225,7 +225,7 @@ if __name__=="__main__":
         else:
             callbacks = None
 
-        BATCH_SIZE = 1024
+        BATCH_SIZE = 256
         model = get_model(MODEL_NAME, VOCAB_SIZE, embedding_matrix, MAX_LENGTH, CTYPE, loss_func, BATCH_SIZE)
         model.summary(print_fn=LOGGER.info)
 
