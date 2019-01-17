@@ -1,25 +1,5 @@
-# Command line parameter
-m: choose model  
-s: sequence by sequence  
-c: class(16/4)
-e: enable early stop
-
-# Avalible model
-| name | description                   | accuracy |
-| --   | ---                           | --       |
-| cnn  | cnn+maxpool+cnn+maxpool+dense |          |
-| lstm | lstm+lstm+dense               |          |
-
-
-# csv column
-|name | description|
-|-----|------------|
-|type| 16 types|
-|posts| long sentence, maxlength=2312|
-|IE | I=1,E=0 |
-|NS | N=1,S=0 |
-|TF | T=1,F=0 |
-|JP | J=1,P=0 |
+# Run Demo
+    python interface.py
 ___
 # Models list
 ## yeqy_CNN
