@@ -59,11 +59,10 @@ def yeqy_cnn(vocab_size,embedding_matrix,input_length, classify_type, loss_funct
     model = keras.Sequential()
     e = keras.layers.Embedding(vocab_size, 50, weights=[embedding_matrix], input_length=input_length, trainable=True)
     model.add(e)
-    model.add(keras.layers.Conv1D(256, 7, padding='valid', activation='relu',
-                                  strides=1))
+    model.add(keras.layers.Conv1D(256, 7, padding='valid', activation='relu',strides=1))
     model.add(keras.layers.GlobalMaxPool1D())
-    model.add(keras.layers.Dense(512, activation='relu',
-                                 bias_regularizer=keras.regularizers.l2(0.05))
+    model.add(keras.layers.Dense(256, activation='relu',
+                                 bias_regularizer=keras.regularizers.l2(0.01))
                                 )
     model.add(keras.layers.Dense(classify_type, activation=final_active_func(classify_type)))
     model.compile(loss=loss_function, optimizer='adam', metrics=['accuracy'])
