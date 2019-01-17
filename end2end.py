@@ -220,7 +220,7 @@ if __name__=="__main__":
         loss_func = 'binary_crossentropy' if CTYPE == 4 else 'categorical_crossentropy'
 
         if args.is_early_stop:
-            callbacks = [keras.callbacks.EarlyStopping(monitor='val_loss', patience=8),
+            callbacks = [keras.callbacks.EarlyStopping(monitor='val_loss', patience=4),
                      keras.callbacks.ModelCheckpoint(filepath='best_model.h5', monitor='val_loss', save_best_only=True)]
         else:
             callbacks = None

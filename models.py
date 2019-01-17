@@ -63,7 +63,10 @@ def yeqy_cnn(vocab_size,embedding_matrix,input_length, classify_type, loss_funct
     model.add(keras.layers.Conv1D(256, 7, padding='valid', activation='relu', strides=1))
     #, bias_regularizer=keras.regularizers.l2(0.001), kernel_initializer=keras.initializers.glorot_normal()))
     model.add(keras.layers.GlobalMaxPool1D())
-    model.add(keras.layers.Dense(256, activation='relu', bias_regularizer=keras.regularizers.l2(0.001), kernel_initializer=keras.initializers.glorot_normal()))
+    model.add(keras.layers.Dropout(0.5))
+    model.add(keras.layers.Dense(512, activation='relu',
+                                 bias_regularizer=keras.regularizers.l2(0.01),
+                                 kernel_initializer=keras.initializers.glorot_normal()))
     model.add(keras.layers.Dense(classify_type, activation=final_active_func(classify_type)))#, bias_regularizer=keras.regularizers.l2(0.001), kernel_initializer=keras.initializers.glorot_normal()))
     # sgd = keras.optimizers.SGD(lr=0.001, decay=1e-6, momentum=0.9, nesterov=True)
     model.compile(loss=loss_function, optimizer='adam', metrics=['accuracy'])
@@ -72,11 +75,10 @@ def yeqy_cnn(vocab_size,embedding_matrix,input_length, classify_type, loss_funct
 
 def zzw_lstm(vocab_size,embedding_matrix,input_length, classify_type, loss_function, batch_size):
     model = keras.Sequential()
-    e = keras.layers.Embedding(vocab_size, 50, weights=[embedding_matrix], input_length=input_length, trainable=False)
+    e = keras.layers.Embedding(vocab_size, 50, weights=[embedding_matrix], input_length=input_length, trainable=True)
     model.add(e)
-    model.add(keras.layers.CuDNNLSTM(50, return_sequences=True))
     model.add(keras.layers.CuDNNLSTM(50, return_sequences=True))
     model.add(keras.layers.CuDNNLSTM(50, return_sequences=False))
     model.add(keras.layers.Dense(classify_type, activation=final_active_func(classify_type)))
-    model.compile(loss=loss_function, optimizer='rmsprop', metrics=['accuracy'])
+    model.compile(loss=loss_function, optimizer='adam', metrics=['accuracy'])
     return model
