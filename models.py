@@ -50,7 +50,7 @@ def yeqy_cnn_single(vocab_size,embedding_matrix,input_length, classify_type, los
     model.add(e)
     # model.add(keras.layers.Conv1D(128, 8, padding='valid', activation='sigmoid', strides=1))
     model.add(keras.layers.Conv1D(256, 7, padding='valid', activation='relu', strides=1,
-                                 bias_regularizer=keras.regularizers.l2(0.01)))
+                                 kernel_regularizer=keras.regularizers.l2(0.01)))
     model.add(keras.layers.GlobalMaxPool1D())
     model.add(keras.layers.Dense(256, activation='relu'))
     model.add(keras.layers.Dense(classify_type, activation=final_active_func(classify_type)))#, bias_regularizer=keras.regularizers.l2(0.001), kernel_initializer=keras.initializers.glorot_normal()))
