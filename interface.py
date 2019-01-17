@@ -1,8 +1,7 @@
 import tkinter as tk
 from PIL import Image, ImageTk
-from util_tools import demo as vis
-
-# from util_tools import randomColor as vis
+import demo as vis
+#import randomColor as vis
 
 # 用于16进制转换
 Dec2Hex = '0123456789abcdef'
@@ -42,7 +41,7 @@ class Application(tk.Frame):
         for content in total:
             if content[0] == 'text':
                 text += content[1]
-        text = text[:-1] # 去掉最后一个'\n'
+        text = text[:-1].lower() # 去掉最后一个'\n'
         return text
     
     # (重新)计算当前sentence的颜色

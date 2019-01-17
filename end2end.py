@@ -22,7 +22,7 @@ CSV_NAME = "MBTI.csv"
 CTYPE = 4
 IS_SEQ = False
 POS_CATEGORY = ['I', 'N', 'T', 'J']
-NEG_CATEGORY = ['E', 'S', 'P', 'F']
+NEG_CATEGORY = ['E', 'S', 'F', 'P']
 
 # Parse args
 import argparse
