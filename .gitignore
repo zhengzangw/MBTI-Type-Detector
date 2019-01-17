@@ -9,4 +9,6 @@ glove.6B.*
 *.csv
 *.p
 *.h5
-
+dist
+build
+setup.py
