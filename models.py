@@ -3,7 +3,7 @@ from log_utils import get_logger
 LOGGER = get_logger("models")
 
 sgd = keras.optimizers.SGD(lr=1e-5, decay=0.5, momentum=0.9, nesterov=True)
-adam = keras.optimizers.Adam()
+adam = keras.optimizers.Adam(lr=1e-5)
 
 def get_model(name,vocab_size,embedding_matrix,input_length, classify_type, loss_function, batch_size):
     if  name=="zzw_cnn":
@@ -51,11 +51,10 @@ def yeqy_cnn_single(vocab_size,embedding_matrix,input_length, classify_type, los
     # model.add(keras.layers.Conv1D(128, 8, padding='valid', activation='sigmoid', strides=1))
     model.add(keras.layers.Conv1D(256, 7, padding='valid', activation='relu', strides=1))
     model.add(keras.layers.GlobalMaxPool1D())
-    model.add(keras.layers.Dense(256, activation='relu',
-                                 kernel_regularizer=keras.regularizers.l2(0.01)))
+    model.add(keras.layers.Dense(256, activation='relu'))
     model.add(keras.layers.Dense(classify_type, activation=final_active_func(classify_type)))#, bias_regularizer=keras.regularizers.l2(0.001), kernel_initializer=keras.initializers.glorot_normal()))
     # sgd = keras.optimizers.SGD(lr=0.001, decay=1e-6, momentum=0.9, nesterov=True)
-    model.compile(loss=loss_function, optimizer='adam', metrics=['accuracy'])
+    model.compile(loss=loss_function, optimizer=adam, metrics=['accuracy'])
     return model
 
 def yeqy_lstm_single(vocab_size,embedding_matrix,input_length, classify_type, loss_function):
