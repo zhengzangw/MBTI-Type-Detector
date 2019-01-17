@@ -86,7 +86,7 @@ def get_embedding_matrix(t):
     f.close()
     LOGGER.info('Loaded %s word vectors.' % len(embeddings_index))
 
-    embedding_matrix = np.zeros((VOCAB_SIZE, 50))
+    embedding_matrix = np.random.normal(0,1,(VOCAB_SIZE, 50))
     for word, i in t.word_index.items():
         embedding_vector = embeddings_index.get(word)
         if embedding_vector is not None:
@@ -225,7 +225,7 @@ if __name__=="__main__":
         else:
             callbacks = None
 
-        BATCH_SIZE = 1024
+        BATCH_SIZE = 128
         model = get_model(MODEL_NAME, VOCAB_SIZE, embedding_matrix, MAX_LENGTH, CTYPE, loss_func, BATCH_SIZE)
         model.summary(print_fn=LOGGER.info)
 
@@ -242,7 +242,7 @@ if __name__=="__main__":
         SAVE_NAME = MODEL_NAME+str(CTYPE)
         if args.is_seq:
             SAVE_NAME += "seq"
-        model.save(MODEL_NAME+".h5")
+        model.save(SAVE_NAME+".h5")
     else:
         model = keras.models.load_model(args.loadpath)
         testing(model, testX, testY)
