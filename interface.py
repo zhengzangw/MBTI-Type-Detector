@@ -1,7 +1,7 @@
 import tkinter as tk
 from PIL import Image, ImageTk
 import demo as vis
-#import randomColor as vis
+#import util_tools.randomColor as vis
 
 # 用于16进制转换
 Dec2Hex = '0123456789abcdef'
@@ -97,7 +97,7 @@ class Application(tk.Frame):
             self.refresh()
 
     def initText(self):
-        self.Text = tk.Text(self)
+        self.Text = tk.Text(self, font = ('Monaco', 20))
         self.Text.grid(row=0, rowspan = 30, column = 1, columnspan = 30)
         self.Text.bind('<KeyPress>', self.__keyPressHandler)
 
