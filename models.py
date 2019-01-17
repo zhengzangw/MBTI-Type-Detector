@@ -14,6 +14,8 @@ def get_model(name,vocab_size,embedding_matrix,input_length, classify_type, loss
         return yeqy_cnn_single(vocab_size,embedding_matrix,input_length, classify_type, loss_function)
     elif name=='yeqy_cnn_m':
         return yeqy_cnn(vocab_size,embedding_matrix,input_length, classify_type, loss_function)
+    elif name=='yeqy_lstm':
+        return yeqy_lstm_single(vocab_size,embedding_matrix,input_length, classify_type, loss_function)
     else:
         LOGGER.error("no such model: {}".format(name))
         assert(0)
@@ -58,6 +60,7 @@ def yeqy_cnn_single(vocab_size,embedding_matrix,input_length, classify_type, los
 def yeqy_lstm_single(vocab_size,embedding_matrix,input_length, classify_type, loss_function):
     model = keras.Sequential()
     e = keras.layers.Embedding(vocab_size, 50, weights=[embedding_matrix], input_length=input_length, trainable=True)
+    model.add(e)
     model.add(keras.layers.CuDNNLSTM(128, return_sequences=False))
     model.add(keras.layers.Dense(128, activation='relu'))
     model.add(keras.layers.Dense(classify_type, activation=final_active_func(classify_type)))
