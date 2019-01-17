@@ -132,7 +132,7 @@ def get_wordcloud(sentence):
             low_bound = -min(temp.values()) + 1
             for key in temp:
                 temp[key] += low_bound
-            # print(temp)
+            #  print(temp)
 
             wc = WordCloud().generate_from_frequencies(temp)
             ax[i][j].imshow(wc)
