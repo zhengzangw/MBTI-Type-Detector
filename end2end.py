@@ -86,7 +86,7 @@ def get_embedding_matrix(t):
     f.close()
     LOGGER.info('Loaded %s word vectors.' % len(embeddings_index))
 
-    embedding_matrix = np.zeros((VOCAB_SIZE, 50))
+    embedding_matrix = np.random.normal(0,1,(VOCAB_SIZE, 50))
     for word, i in t.word_index.items():
         embedding_vector = embeddings_index.get(word)
         if embedding_vector is not None:
