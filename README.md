@@ -24,7 +24,6 @@ You need MBTI.csv, glove.6B.50d.txt to train the demo
 ___
 # Model Infomation
 CNN info:
-![Model](https://github.com/zhengzangw/ml-winter-camp/blob/master/pic/model.png)
 
     [ 2019-01-17 07:05:59,126][end2end]
     Accuracy(Total) on test set(10%) = 0.5362232779097387
