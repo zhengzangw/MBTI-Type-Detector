@@ -99,7 +99,9 @@ def gen_color(sentence, for_wordcloud = False):
     blue_inc = [0,0,1 if persenality[0][2]>0.5 else -1,0]
     yellow_inc = [0, 0, 0, 1 if persenality[0][2]>0.5 else -1]
     ans_dict = {0: [], 1: [], 2: [], 3: []}
+    split_sentence = sentence.split(' ')
     for i in range(4):
+        pt = 0
         print("In {}th dimension, the sentense looks like:\n\t".format(i+1), end='')
         for t in range(docs_len):
             R = int(red[i] + 5 * modified_persenality_dict[t][0][i] * 1000 * red_inc[i])
@@ -108,12 +110,22 @@ def gen_color(sentence, for_wordcloud = False):
             Y = int(yellow[i] + 5 * modified_persenality_dict[t][0][i] * 1000 * yellow_inc[i])
             G += int(float(Y)/2)
             R += int(float(Y)/2)
+            while reverse_word_map[padded_docs[0][t]] != split_sentence[pt]:
+                ans_dict[i].append([split_sentence[pt], [0.0, 0.0, 0.0]])
+                pt += 1
+
             ans_dict[i].append([reverse_word_map[padded_docs[0][t]], [R, G, B]])
             print(fg(int(red[i]+5*modified_persenality_dict[t][0][i]*1000*red_inc[i]),
                      int(green[i]+5*modified_persenality_dict[t][0][i]*1000*green_inc[i]),
                      int(blue[i]+5*modified_persenality_dict[t][0][i]*1000*blue_inc[i]))
                   + reverse_word_map[padded_docs[0][t]] + fg.rs,end=' ')
+            pt += 1
+        while pt < len(split_sentence):
+            ans_dict[i].append([split_sentence[pt], [0.0, 0.0, 0.0]])
+            pt += 1
+
         print()
+
     persenality_ret = []
     for i in range(4):
         persenality_ret.append(0 if persenality[0][i] > 0.5 else 1)
