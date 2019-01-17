@@ -1,5 +1,5 @@
 # Run Demo
-    python interface.py
+    make demo
 ___
 # Models list
 ## yeqy_CNN

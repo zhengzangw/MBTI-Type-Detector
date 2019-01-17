@@ -45,10 +45,10 @@ def output_persenality(persenality, original=False):
         for t in range(4):
             if persenality[0][t] > 0.5:
                 print("\t{}:({:.1f})".format(MBTI_pos[t], persenality[0][t]))
-                prob[t] = persenality[0][t]
+                prob[t] = int(persenality[0][t]*100)
             else:
                 print("\t{}:({:.1f})".format(MBTI_neg[t], 1-persenality[0][t]))
-                prob[t] = 1 - persenality[0][t]
+                prob[t] = int(100*(1 - persenality[0][t]))
 
 def gen_color(sentence, for_wordcloud = False):
     df = pd.DataFrame(columns=['posts'])
@@ -149,7 +149,7 @@ def get_wordcloud(sentence):
 
             wc = WordCloud().generate_from_frequencies(temp)
             ax[i][j].imshow(wc)
-            ax[i][j].set_title((MBTI_pos[2*i+j] if persenality[0][2]>0.5 else MBTI_neg[2*i+j])+'('+str(prob[2*i+j])+')',
+            ax[i][j].set_title((MBTI_pos[2*i+j] if persenality[0][2]>0.5 else MBTI_neg[2*i+j])+'('+str(prob[2*i+j])+'%)',
                                fontsize=50)
             ax[i][j].axis("off")
 
