@@ -18,7 +18,7 @@ args = parse_args()
 tf.set_random_seed(1234)
 from log_utils import get_logger
 LOGGER = get_logger("demos")
-MAX_LENGTH = 2300
+MAX_LENGTH = 400
 import pickle
 MBTI_pos = ['I', 'N', 'T', 'J']
 MBTI_neg = ['E', 'S', 'F', 'P']
@@ -111,4 +111,5 @@ def gen_color(sentence):
 if __name__=="__main__":
     load_model_and_data(args.loadpath)
     sentence = input('Please Input a sentence: ')
+    gen_color(sentence)
 

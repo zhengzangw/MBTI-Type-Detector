@@ -1,6 +1,6 @@
 import tkinter as tk
 from PIL import Image, ImageTk
-import randomColor as vis #visualization lib
+import demo as vis
 
 # 用于16进制转换
 Dec2Hex = '0123456789abcdef'
@@ -173,6 +173,7 @@ class Application(tk.Frame):
 
 
 if __name__ == '__main__':
+    vis.load_model_and_data("cnn16seq.h5")
     app = Application()                     
     app.master.title('Sample application')   
     app.mainloop()         
