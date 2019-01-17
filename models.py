@@ -62,8 +62,8 @@ def yeqy_cnn(vocab_size,embedding_matrix,input_length, classify_type, loss_funct
     # model.add(keras.layers.Conv1D(128, 8, padding='valid', activation='sigmoid', strides=1))
     model.add(keras.layers.Conv1D(256, 7, padding='valid', activation='relu', strides=1))
     #, bias_regularizer=keras.regularizers.l2(0.001), kernel_initializer=keras.initializers.glorot_normal()))
-    model.add(keras.layers.MaxPool1D(100))
-    model.add(keras.layers.Conv1D(128, 7, padding='valid', activation='relu', strides=1))
+    model.add(keras.layers.AveragePooling1D(100))
+    model.add(keras.layers.Conv1D(256, 7, padding='valid', activation='relu', strides=1))
     model.add(keras.layers.GlobalMaxPool1D())
     model.add(keras.layers.Dense(512, activation='relu',
                                  bias_regularizer=keras.regularizers.l2(0.01),
@@ -81,5 +81,5 @@ def zzw_lstm(vocab_size,embedding_matrix,input_length, classify_type, loss_funct
     model.add(keras.layers.CuDNNLSTM(50, return_sequences=True))
     model.add(keras.layers.CuDNNLSTM(50, return_sequences=False))
     model.add(keras.layers.Dense(classify_type, activation=final_active_func(classify_type)))
-    model.compile(loss=loss_function, optimizer='adam', metrics=['accuracy'])
+    model.compile(loss=loss_function, optimizer=sgd, metrics=['accuracy'])
     return model
