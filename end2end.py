@@ -8,11 +8,11 @@ from tensorflow import keras
 
 tf.set_random_seed(1234)
 
-from log_utils import get_logger
+from util_tools.log_utils import get_logger
 LOGGER = get_logger("end2end")
 
 from models import get_model
-from cleandata import split_sentence, get_the_label
+from util_tools.cleandata import split_sentence, get_the_label
 
 # Glabol Variable
 MAX_LENGTH = 0
@@ -94,7 +94,7 @@ def get_embedding_matrix(t):
     return embedding_matrix
 
 # Split Data
-from oversampling import oversampling_csv
+from util_tools.oversampling import oversampling_csv
 def data_splitting(docs, labels):
     global IS_SEQ
     trainX, trainY, valX, valY, testX, testY = oversampling_csv(docs, labels, IS_SEQ)

@@ -1,5 +1,5 @@
 from tensorflow import keras
-from log_utils import get_logger
+from util_tools.log_utils import get_logger
 LOGGER = get_logger("models")
 
 sgd = keras.optimizers.SGD(lr=1e-5, decay=0.5, momentum=0.9, nesterov=True)

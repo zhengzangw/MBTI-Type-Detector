@@ -1,7 +1,8 @@
 import tkinter as tk
 from PIL import Image, ImageTk
-#import demo as vis
-import randomColor as vis
+from util_tools import demo as vis
+
+# from util_tools import randomColor as vis
 
 # 用于16进制转换
 Dec2Hex = '0123456789abcdef'

@@ -4,11 +4,10 @@ os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
 import tensorflow as tf
 from tensorflow import keras
 import pandas as pd
-from cleandata import deal_with_URL, deal_with_emoji
+from util_tools.cleandata import deal_with_URL, deal_with_emoji
 import PIL
-from scipy.misc import imread
 import matplotlib.pyplot as plt
-from wordcloud import WordCloud, STOPWORDS
+from wordcloud import WordCloud
 
 import argparse
 def parse_args():
@@ -20,7 +19,7 @@ def parse_args():
 # 初始化
 args = parse_args()
 tf.set_random_seed(1234)
-from log_utils import get_logger
+from util_tools.log_utils import get_logger
 LOGGER = get_logger("demos")
 MAX_LENGTH = 2300
 import pickle
@@ -35,7 +34,7 @@ def load_model_and_data(path):
     model = keras.models.load_model(path)
     tokenizer = pickle.load(open("tokenizer.p", "rb"))
 
-
+prob = [0,0,0,0]
 def output_persenality(persenality, original=False):
     MBTI_tag = ""
     for i in range(4):
@@ -46,8 +45,10 @@ def output_persenality(persenality, original=False):
         for t in range(4):
             if persenality[0][t] > 0.5:
                 print("\t{}:({:.1f})".format(MBTI_pos[t], persenality[0][t]))
+                prob[t] = persenality[0][t]
             else:
                 print("\t{}:({:.1f})".format(MBTI_neg[t], 1-persenality[0][t]))
+                prob[t] = 1 - persenality[0][t]
 
 def gen_color(sentence, for_wordcloud = False):
     df = pd.DataFrame(columns=['posts'])
@@ -148,7 +149,8 @@ def get_wordcloud(sentence):
 
             wc = WordCloud().generate_from_frequencies(temp)
             ax[i][j].imshow(wc)
-            ax[i][j].set_title(MBTI_pos[2*i+j] if persenality[0][2]>0.5 else MBTI_neg[2*i+j], fontsize=50)
+            ax[i][j].set_title((MBTI_pos[2*i+j] if persenality[0][2]>0.5 else MBTI_neg[2*i+j])+'('+str(prob[2*i+j])+')',
+                               fontsize=50)
             ax[i][j].axis("off")
 
     canvas = plt.get_current_fig_manager().canvas
