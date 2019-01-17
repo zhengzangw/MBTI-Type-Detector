@@ -160,7 +160,7 @@ class Application(tk.Frame):
 
     # 生成word graph
     def wordGraph(self):
-        self.wordGraphFrame = tk.Toplevel(self)
+        self.wordGraphFrame = tk.Toplevel()
         self.wordGraphCanvas = tk.Canvas(master = self.wordGraphFrame, width = 800, height = 600)
         self.wordGraphImage_PIL = vis.get_wordcloud(self.__dumpText())
         self.wordGraphImage_PIL = self.__adaptImage(self.wordGraphImage_PIL, 800, 600)
