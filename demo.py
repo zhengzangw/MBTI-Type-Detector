@@ -5,6 +5,7 @@ import tensorflow as tf
 from tensorflow import keras
 import pandas as pd
 from cleandata import deal_with_URL, deal_with_emoji
+import PIL
 
 import argparse
 def parse_args():
@@ -22,6 +23,7 @@ MAX_LENGTH = 400
 import pickle
 MBTI_pos = ['I', 'N', 'T', 'J']
 MBTI_neg = ['E', 'S', 'F', 'P']
+DOCS_LEN = 0
 model, tokenizer = None, None
 # init end
 
@@ -55,6 +57,7 @@ def gen_color(sentence):
 
     encoded_docs = tokenizer.texts_to_sequences([sentence])
     docs_len = len(encoded_docs[0])
+    DOCS_LEN = len(docs_len)
     padded_docs = keras.preprocessing.sequence.pad_sequences(encoded_docs, maxlen=MAX_LENGTH, padding='post')
 
     persenality = model.predict(padded_docs)
@@ -107,6 +110,36 @@ def gen_color(sentence):
     for i in range(4):
         persenality_ret.append(0 if persenality[0][i] > 0.5 else 1)
     return ans_dict, persenality_ret
+
+def get_wordcloud(persenality, reverse_word_map, padded_docs, modified_persenality_dict):
+    import matplotlib.pyplot as plt
+    from scipy.misc import imread
+    from wordcloud import WordCloud, STOPWORDS
+    fig, ax = plt.subplots(4, sharex=True, figsize=(15, 10 * 4))
+    import PIL
+
+    k = 0
+    for i in range(4):
+        temp = {}
+        sgn = 1 if persenality[0][i] > 0.5 else -1
+        for t in range(DOCS_LEN):
+            temp[reverse_word_map[padded_docs[0][t]]] = int(1000 * modified_persenality_dict[t][0][i] * sgn)
+        low_bound = -min(temp.values()) + 1
+        for key in temp:
+            temp[key] += low_bound
+        # print(temp)
+
+        wc = WordCloud().generate_from_frequencies(temp)
+        ax[k].imshow(wc)
+        ax[k].set_title(i)
+        ax[k].axis("off")
+        k += 1
+
+    canvas = plt.get_current_fig_manager().canvas
+    canvas.draw()
+    pil_image = PIL.Image.frombytes('RGB', canvas.get_width_height(),
+                                    canvas.tostring_rgb())
+    return pil_image
 
 if __name__=="__main__":
     load_model_and_data(args.loadpath)
